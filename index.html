@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NYC AI Co-working Network Atlas</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="NYC AI Co-working home">
+        <span class="brand-mark" aria-hidden="true">NYC</span>
+        <span>
+          <strong>NYC AI Co-working</strong>
+          <small>Project and people atlas</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#projects">Projects</a>
+        <a href="#people">People</a>
+        <a href="#ledger">Ledger</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="workspace" aria-labelledby="workspace-title">
+        <div class="workspace-copy">
+          <p class="eyebrow">Monthly builder network</p>
+          <h1 id="workspace-title">See what people are building, who is showing up, and where the network should connect.</h1>
+          <p class="lead">
+            A working surface for demos, project profiles, builder profiles, blockers, intros, and follow-up context.
+          </p>
+
+          <div class="workspace-actions" aria-label="Network controls">
+            <label class="search-control">
+              <span>Search</span>
+              <input id="searchInput" type="search" placeholder="Project, person, need, tag" autocomplete="off" />
+            </label>
+            <div class="mode-control" role="group" aria-label="View mode">
+              <button class="mode-button is-active" type="button" data-mode="all">All</button>
+              <button class="mode-button" type="button" data-mode="projects">Projects</button>
+              <button class="mode-button" type="button" data-mode="people">People</button>
+            </div>
+          </div>
+
+          <div class="metrics" aria-label="Operating targets">
+            <div>
+              <strong>4-6</strong>
+              <span>demo slots</span>
+            </div>
+            <div>
+              <strong>2</strong>
+              <span>alternates</span>
+            </div>
+            <div>
+              <strong>5+</strong>
+              <span>useful intros</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="network-panel" aria-label="Network graph">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Network map</p>
+              <h2>Builders, projects, and asks</h2>
+            </div>
+            <div class="legend" aria-label="Graph legend">
+              <span><i class="legend-dot project-dot"></i>Project</span>
+              <span><i class="legend-dot person-dot"></i>Person</span>
+              <span><i class="legend-dot ask-dot"></i>Need</span>
+            </div>
+          </div>
+          <svg id="networkGraph" viewBox="0 0 900 560" role="img" aria-label="Interactive map of NYC AI Co-working projects and people"></svg>
+        </div>
+
+        <aside class="detail-panel" id="detailPanel" aria-live="polite">
+          <p class="eyebrow">Selected profile</p>
+          <h2>Choose a node</h2>
+          <p>Select any person or project to see what they are building, what is blocked, and who could help.</p>
+        </aside>
+      </section>
+
+      <section class="filter-band" aria-label="Project filters">
+        <div class="section-intro">
+          <p class="eyebrow">Browse</p>
+          <h2>Find demos by theme and next action</h2>
+        </div>
+        <div id="filterChips" class="filter-chips"></div>
+      </section>
+
+      <section id="projects" class="content-section" aria-labelledby="projects-title">
+        <div class="section-intro">
+          <p class="eyebrow">Project profiles</p>
+          <h2 id="projects-title">Demos and projects worth tracking</h2>
+        </div>
+        <div id="projectGrid" class="project-grid"></div>
+      </section>
+
+      <section id="people" class="content-section split-section" aria-labelledby="people-title">
+        <div>
+          <div class="section-intro">
+            <p class="eyebrow">People profiles</p>
+            <h2 id="people-title">Who shows up and what they can move forward</h2>
+          </div>
+          <div id="peopleGrid" class="people-grid"></div>
+        </div>
+
+        <div class="pipeline" aria-label="Demo pipeline">
+          <div class="section-intro compact">
+            <p class="eyebrow">Demo slate</p>
+            <h2>Operating buckets</h2>
+          </div>
+          <div id="pipelineColumns" class="pipeline-columns"></div>
+        </div>
+      </section>
+
+      <section id="ledger" class="ledger-section" aria-labelledby="ledger-title">
+        <div class="section-intro">
+          <p class="eyebrow">Builder ledger</p>
+          <h2 id="ledger-title">The fields that keep the network useful after the room clears</h2>
+        </div>
+        <div class="ledger-grid">
+          <article>
+            <span class="ledger-icon">01</span>
+            <h3>Project context</h3>
+            <p>What they are building, stage, demo status, links, and the specific feedback they want.</p>
+          </article>
+          <article>
+            <span class="ledger-icon">02</span>
+            <h3>Current blocker</h3>
+            <p>Users, intros, cofounders, engineering help, GTM, venue, funding, or sharper product feedback.</p>
+          </article>
+          <article>
+            <span class="ledger-icon">03</span>
+            <h3>Relationship path</h3>
+            <p>Attendance history, last touch, next follow-up, permission to mention, and how closely to track.</p>
+          </article>
+          <article>
+            <span class="ledger-icon">04</span>
+            <h3>Network value</h3>
+            <p>Which people, projects, venues, sponsors, customers, or collaborator paths are actually relevant.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
