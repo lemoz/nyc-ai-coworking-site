@@ -19,7 +19,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="#atlas">Atlas</a>
         <a href="#projects">Demos</a>
-        <a href="#live">Live</a>
+        <a href="#live">Planned</a>
         <a class="nav-cta" href="#meetup">RSVP</a>
       </nav>
     </header>
@@ -27,15 +27,25 @@
     <main id="top">
       <section class="hero" id="atlas" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="pulse" aria-hidden="true"></span>Live network &middot; New York active</p>
-          <h1 id="hero-title">Build faster inside NYC's AI co-working network.</h1>
+          <p class="eyebrow"><span class="pulse" aria-hidden="true"></span>NYC meetup active &middot; live layer planned</p>
+          <h1 id="hero-title">Build faster with NYC's AI builders.</h1>
           <p class="lede">
-            An at-will, AI-enabled co-working network for builders. Show up, ship demos,
-            get real feedback, and find the people who can move your project forward.
+            Bring what you are building, work alongside other AI builders, demo when ready,
+            and leave with sharper feedback or a useful intro.
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#meetup">RSVP next meetup</a>
-            <a class="btn btn-ghost" href="#projects">View demos</a>
+          </div>
+          <div class="hero-demo-row" aria-label="Featured demo slate">
+            <a class="demo-row-title" href="#projects">Demo slate</a>
+            <button type="button" data-select="imposter-artist">Imposter Artist</button>
+            <button type="button" data-select="got2eat">Got2Eat</button>
+            <button type="button" data-select="rem">Rem</button>
+          </div>
+          <div class="hero-event" aria-label="Next meetup summary">
+            <strong>Next NYC meetup</strong>
+            <span>Monthly co-working + demos. Details in RSVP.</span>
+            <small>Profiles are opt-in. Demo people approve public details before launch.</small>
           </div>
         </div>
 
@@ -43,12 +53,13 @@
           <div class="atlas-head">
             <div class="atlas-title">
               <p class="eyebrow">Network atlas</p>
-              <h2>NYC AI Co-working is the center node.</h2>
+              <h2>Tap nodes to see builders, projects, asks, and intro paths.</h2>
+              <p class="atlas-hint">New York is active. Shenzhen and live co-working are planned future nodes.</p>
             </div>
             <div class="atlas-controls">
               <label class="search">
                 <span class="sr-only">Search the graph</span>
-                <input id="searchInput" type="search" placeholder="Search people, projects, asks" autocomplete="off" />
+                <input id="searchInput" type="search" placeholder="Search graph" autocomplete="off" />
               </label>
               <div class="modes" role="group" aria-label="View mode">
                 <button class="mode is-active" type="button" data-mode="all">All</button>
@@ -76,29 +87,22 @@
         </div>
       </section>
 
-      <section class="paths-section" aria-label="Connection paths">
-        <div class="paths">
-          <p class="eyebrow">Connection paths</p>
-          <h3>Trace how the network creates value</h3>
-          <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
-          <div id="activePath" class="active-path" aria-live="polite"></div>
+      <section class="trust-strip" aria-label="What happens at NYC AI Co-working">
+        <div>
+          <strong>Monthly in NYC</strong>
+          <span>Co-working, demos, feedback, and useful intros.</span>
         </div>
-      </section>
-
-      <section id="live" class="band" aria-labelledby="live-title">
-        <div class="band-intro">
-          <p class="eyebrow">Opt-in live layer</p>
-          <h2 id="live-title">Online should mean co-working, not surveillance.</h2>
-          <p>
-            A future member mode where builders can enter the network remotely, share a
-            lightweight session context, and get useful help while they are actually working.
-          </p>
+        <div>
+          <strong>Demo slate</strong>
+          <span>Imposter Artist, Got2Eat, Rem, Grantsville, and alternates.</span>
         </div>
-        <div class="cards-4">
-          <article class="feature"><span class="num">01</span><h3>Live work session</h3><p>Mark yourself active, note what you are working on, and optionally share a short session note.</p></article>
-          <article class="feature"><span class="num">02</span><h3>Context, not intrusion</h3><p>The useful unit is current project, blocker, and ask. Presence stays opt-in and private by default.</p></article>
-          <article class="feature"><span class="num">03</span><h3>Mid-work intros</h3><p>When two active builders overlap on projects or asks, the system can suggest a low-friction intro.</p></article>
-          <article class="feature"><span class="num">04</span><h3>Profile approval</h3><p>Public profiles start with demo people, then this month's builders, each confirmed by email first.</p></article>
+        <div>
+          <strong>Opt-in profiles</strong>
+          <span>Builders choose what is visible before anything public ships.</span>
+        </div>
+        <div>
+          <strong>Network follow-up</strong>
+          <span>Projects connect to asks, clips, feedback, and specific next moves.</span>
         </div>
       </section>
 
@@ -111,6 +115,15 @@
           <div id="filterChips" class="filter-chips"></div>
         </div>
         <div id="projectGrid" class="project-grid"></div>
+      </section>
+
+      <section class="paths-section" aria-label="Connection paths">
+        <div class="paths">
+          <p class="eyebrow">Connection paths</p>
+          <h3>Trace how the network creates value</h3>
+          <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
+          <div id="activePath" class="active-path" aria-live="polite"></div>
+        </div>
       </section>
 
       <section id="people" class="band split" aria-labelledby="people-title">
@@ -128,16 +141,36 @@
         </aside>
       </section>
 
+      <section id="live" class="band" aria-labelledby="live-title">
+        <div class="band-intro">
+          <p class="eyebrow">Planned live co-working layer</p>
+          <h2 id="live-title">Online should mean co-working, not surveillance.</h2>
+          <p>
+            A planned member mode where builders can enter the network remotely, share a
+            lightweight session context, and get useful help while they are actually working.
+          </p>
+        </div>
+        <div class="cards-4">
+          <article class="feature"><span class="num">01</span><h3>Live work session</h3><p>Mark yourself active, note what you are working on, and optionally share a short session note.</p></article>
+          <article class="feature"><span class="num">02</span><h3>Context, not intrusion</h3><p>The useful unit is current project, blocker, and ask. Presence stays opt-in and private by default.</p></article>
+          <article class="feature"><span class="num">03</span><h3>Mid-work intros</h3><p>When two active builders overlap on projects or asks, the system can suggest a low-friction intro.</p></article>
+          <article class="feature"><span class="num">04</span><h3>Profile approval</h3><p>Public profiles start with demo people, then this month's builders, each confirmed by email first.</p></article>
+        </div>
+      </section>
+
       <section id="meetup" class="band cta-band" aria-labelledby="meetup-title">
         <div class="band-intro">
           <p class="eyebrow">RSVP next meetup</p>
           <h2 id="meetup-title">The event is the spike. The network is the product.</h2>
           <p>
-            The primary CTA points to the current RSVP link as soon as the next event page is live.
-            Until then: recurring co-working, demo slots, opt-in profiles, and a live layer that can
-            grow beyond New York.
+            RSVP for the next NYC room, submit a demo interest, or opt into a builder profile.
+            Public profile and demo details are confirmed by each builder before publishing.
           </p>
-          <a class="btn btn-primary" href="#top">RSVP next meetup</a>
+          <div class="rsvp-actions">
+            <a class="btn btn-primary" href="#top">RSVP next meetup</a>
+            <a class="btn btn-secondary" href="#projects">Submit demo interest</a>
+            <a class="btn btn-ghost" href="#people">Opt into profile</a>
+          </div>
         </div>
         <div class="cards-4">
           <article class="feature"><span class="num">01</span><h3>Project context</h3><p>Stage, demo status, links, desired feedback, and media permission.</p></article>

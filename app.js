@@ -290,17 +290,17 @@ const meetupNodes = [
     id: "nyc-ai-room",
     name: "NYC AI Co-working",
     kind: "meetup",
-    description: "The center node: recurring NYC co-working, demo nights, remote sessions, profiles, and useful intros.",
-    tags: ["meetup", "monthly", "center node", "community"],
+    description: "Recurring NYC co-working, demo nights, opt-in builder profiles, and useful intros for people shipping AI projects.",
+    tags: ["meetup", "monthly", "opt-in profiles", "community"],
     x: 600,
     y: 370
   },
   {
     id: "live-coworking",
-    name: "Opt-in live co-working",
+    name: "Planned live co-working",
     kind: "meetup",
     description:
-      "A future remote mode where builders can enter the network while working, share lightweight session context, and get useful help without publishing by default.",
+      "A planned remote mode where builders can enter the network while working, share lightweight session context, and get useful help without publishing by default.",
     tags: ["remote", "presence", "opt-in", "live"],
     x: 260,
     y: 330
@@ -441,7 +441,7 @@ const pathPrompts = [
   },
   {
     id: "live-intro",
-    label: "Live session to mid-work intro",
+    label: "Planned live session to intro",
     path: ["live-coworking", "profile-consent", "intros", "nyc-ai-room"],
     note: "Online presence becomes valuable only when it stays opt-in and turns current work into timely help."
   },
@@ -701,16 +701,16 @@ function detailForSelected() {
 
   const meetup = meetupNodes.find((item) => item.id === state.selectedId);
   if (meetup) {
-    const liveRows =
+      const liveRows =
       meetup.id === "live-coworking"
         ? [
-            ["Mode", "Optional remote co-working session"],
+            ["Mode", "Planned optional remote co-working session"],
             ["Signal", "What you are working on, current blocker, and useful help"],
             ["Privacy default", "Presence and session context are opt-in; public profile requires approval"]
           ]
         : [
             ["Cadence", "Regular monthly co-working and demos"],
-            ["Job", "Turn one room into a durable builder graph"],
+            ["Builder value", "Sharper feedback, useful intros, and visible demo follow-up"],
             ["Success signal", "Useful intros, better demos, and follow-up records after each event"]
           ];
     return {
