@@ -10,32 +10,48 @@
   <body>
     <header class="topbar">
       <a class="brand" href="#top" aria-label="NYC AI Co-working home">
-        <span class="brand-mark" aria-hidden="true">NYC</span>
+        <span class="brand-mark" aria-hidden="true">NYC AI</span>
         <span>
           <strong>NYC AI Co-working</strong>
-          <small>Project and people atlas</small>
+          <small>Monthly meetup and builder graph</small>
         </span>
       </a>
       <nav class="nav" aria-label="Primary">
+        <a href="#atlas">Graph</a>
         <a href="#projects">Projects</a>
         <a href="#people">People</a>
-        <a href="#ledger">Ledger</a>
+        <a href="#meetup">Meetup</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="workspace" aria-labelledby="workspace-title">
-        <div class="workspace-copy">
-          <p class="eyebrow">Monthly builder network</p>
-          <h1 id="workspace-title">See what people are building, who is showing up, and where the network should connect.</h1>
-          <p class="lead">
-            A working surface for demos, project profiles, builder profiles, blockers, intros, and follow-up context.
+      <section class="hero" id="atlas" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Regular NYC builder meetup</p>
+          <h1 id="hero-title">A living graph for NYC AI co-working.</h1>
+          <p>
+            A recurring meetup where builders demo projects, meet useful people, and leave behind a clearer map of the network.
           </p>
+        </div>
 
-          <div class="workspace-actions" aria-label="Network controls">
+        <div class="hero-stats" aria-label="Meetup operating targets">
+          <div><strong>Monthly</strong><span>co-working and demos</span></div>
+          <div><strong>4-6</strong><span>project demos</span></div>
+          <div><strong>5+</strong><span>useful intros per event</span></div>
+        </div>
+      </section>
+
+      <section class="atlas-shell" aria-label="Interactive builder graph">
+        <div class="atlas-toolbar">
+          <div>
+            <p class="eyebrow">Network atlas</p>
+            <h2>Click a node. Find the connection path.</h2>
+          </div>
+
+          <div class="controls">
             <label class="search-control">
-              <span>Search</span>
-              <input id="searchInput" type="search" placeholder="Project, person, need, tag" autocomplete="off" />
+              <span>Search graph</span>
+              <input id="searchInput" type="search" placeholder="Project, person, ask, tag" autocomplete="off" />
             </label>
             <div class="mode-control" role="group" aria-label="View mode">
               <button class="mode-button is-active" type="button" data-mode="all">All</button>
@@ -43,57 +59,54 @@
               <button class="mode-button" type="button" data-mode="people">People</button>
             </div>
           </div>
-
-          <div class="metrics" aria-label="Operating targets">
-            <div>
-              <strong>4-6</strong>
-              <span>demo slots</span>
-            </div>
-            <div>
-              <strong>2</strong>
-              <span>alternates</span>
-            </div>
-            <div>
-              <strong>5+</strong>
-              <span>useful intros</span>
-            </div>
-          </div>
         </div>
 
-        <div class="network-panel" aria-label="Network graph">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Network map</p>
-              <h2>Builders, projects, and asks</h2>
-            </div>
+        <div class="atlas-grid">
+          <div class="map-stage">
+            <div class="map-backdrop" aria-hidden="true"></div>
+            <svg id="networkGraph" viewBox="0 0 1200 760" role="img" aria-label="Interactive map of NYC AI Co-working people, projects, asks, and meetup surfaces"></svg>
             <div class="legend" aria-label="Graph legend">
-              <span><i class="legend-dot project-dot"></i>Project</span>
               <span><i class="legend-dot person-dot"></i>Person</span>
-              <span><i class="legend-dot ask-dot"></i>Need</span>
+              <span><i class="legend-dot project-dot"></i>Project</span>
+              <span><i class="legend-dot ask-dot"></i>Ask</span>
+              <span><i class="legend-dot meetup-dot"></i>Meetup</span>
             </div>
           </div>
-          <svg id="networkGraph" viewBox="0 0 900 560" role="img" aria-label="Interactive map of NYC AI Co-working projects and people"></svg>
+
+          <aside class="profile-panel" id="profilePanel" aria-live="polite">
+            <p class="eyebrow">Selected profile</p>
+            <h2>Choose a node</h2>
+            <p>Select any person, project, ask, or meetup surface to see the profile and graph path.</p>
+          </aside>
         </div>
 
-        <aside class="detail-panel" id="detailPanel" aria-live="polite">
-          <p class="eyebrow">Selected profile</p>
-          <h2>Choose a node</h2>
-          <p>Select any person or project to see what they are building, what is blocked, and who could help.</p>
-        </aside>
+        <div class="connection-tray">
+          <div>
+            <p class="eyebrow">Connection game</p>
+            <h3>WikiHole-style prompts</h3>
+            <p>Use the graph to test whether this meetup creates real paths between demos, builders, needs, and follow-ups.</p>
+          </div>
+          <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
+          <div id="activePath" class="active-path" aria-live="polite"></div>
+        </div>
       </section>
 
       <section class="filter-band" aria-label="Project filters">
         <div class="section-intro">
-          <p class="eyebrow">Browse</p>
-          <h2>Find demos by theme and next action</h2>
+          <div>
+            <p class="eyebrow">Browse</p>
+            <h2>Filter the project and people ledger</h2>
+          </div>
         </div>
         <div id="filterChips" class="filter-chips"></div>
       </section>
 
       <section id="projects" class="content-section" aria-labelledby="projects-title">
         <div class="section-intro">
-          <p class="eyebrow">Project profiles</p>
-          <h2 id="projects-title">Demos and projects worth tracking</h2>
+          <div>
+            <p class="eyebrow">Project profiles</p>
+            <h2 id="projects-title">Demos and projects worth tracking</h2>
+          </div>
         </div>
         <div id="projectGrid" class="project-grid"></div>
       </section>
@@ -101,8 +114,10 @@
       <section id="people" class="content-section split-section" aria-labelledby="people-title">
         <div>
           <div class="section-intro">
-            <p class="eyebrow">People profiles</p>
-            <h2 id="people-title">Who shows up and what they can move forward</h2>
+            <div>
+              <p class="eyebrow">People profiles</p>
+              <h2 id="people-title">Who shows up and what they can move forward</h2>
+            </div>
           </div>
           <div id="peopleGrid" class="people-grid"></div>
         </div>
@@ -116,31 +131,34 @@
         </div>
       </section>
 
-      <section id="ledger" class="ledger-section" aria-labelledby="ledger-title">
-        <div class="section-intro">
-          <p class="eyebrow">Builder ledger</p>
-          <h2 id="ledger-title">The fields that keep the network useful after the room clears</h2>
+      <section id="meetup" class="meetup-section" aria-labelledby="meetup-title">
+        <div>
+          <p class="eyebrow">Recurring meetup</p>
+          <h2 id="meetup-title">The event is the spike. The network is the product.</h2>
+          <p>
+            Every month should leave behind a cleaner map: who attended, what they are building, what is blocked, who they should meet, and what should be followed up before the next room.
+          </p>
         </div>
         <div class="ledger-grid">
           <article>
             <span class="ledger-icon">01</span>
             <h3>Project context</h3>
-            <p>What they are building, stage, demo status, links, and the specific feedback they want.</p>
+            <p>Stage, demo status, links, desired feedback, and media permission.</p>
           </article>
           <article>
             <span class="ledger-icon">02</span>
             <h3>Current blocker</h3>
-            <p>Users, intros, cofounders, engineering help, GTM, venue, funding, or sharper product feedback.</p>
+            <p>Users, intros, cofounders, GTM, funding, venue, or product feedback.</p>
           </article>
           <article>
             <span class="ledger-icon">03</span>
-            <h3>Relationship path</h3>
-            <p>Attendance history, last touch, next follow-up, permission to mention, and how closely to track.</p>
+            <h3>Follow-up path</h3>
+            <p>Attendance history, last touch, next follow-up, and how closely to track.</p>
           </article>
           <article>
             <span class="ledger-icon">04</span>
             <h3>Network value</h3>
-            <p>Which people, projects, venues, sponsors, customers, or collaborator paths are actually relevant.</p>
+            <p>The actual connection path between a person, project, ask, and next intro.</p>
           </article>
         </div>
       </section>
