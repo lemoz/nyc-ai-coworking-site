@@ -458,7 +458,7 @@ const state = {
   mode: "all",
   query: "",
   selectedId: "nyc-ai-room",
-  activePathId: "advik-feedback"
+  activePathId: null
 };
 
 const projectGrid = document.querySelector("#projectGrid");

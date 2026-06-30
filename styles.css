@@ -1415,6 +1415,267 @@ h3 {
   display: none !important;
 }
 
+/* Hard reset: make the first screen a clean product surface, not a collage. */
+.network-hero {
+  grid-template-columns: minmax(320px, 0.42fr) minmax(0, 1fr);
+  grid-template-rows: minmax(560px, calc(100vh - 260px)) minmax(126px, auto);
+  gap: 14px;
+  min-height: calc(100vh - 78px);
+  padding: 18px;
+  background:
+    radial-gradient(circle at 70% 38%, rgba(40, 199, 183, 0.14), transparent 24rem),
+    radial-gradient(circle at 20% 62%, rgba(176, 255, 63, 0.12), transparent 16rem),
+    linear-gradient(135deg, #070b10 0%, #0d1219 58%, #080c11 100%);
+}
+
+.world-grid {
+  opacity: 0.42;
+}
+
+.hero-copy {
+  align-self: center;
+  max-width: 360px;
+}
+
+.hero-copy .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  border: 1px solid rgba(176, 255, 63, 0.34);
+  border-radius: 999px;
+  padding: 0 10px;
+  background: rgba(176, 255, 63, 0.08);
+  color: var(--green);
+}
+
+.hero-copy h1 {
+  max-width: 9.6ch;
+  margin-top: 16px;
+  font-size: clamp(44px, 5vw, 80px);
+  line-height: 0.96;
+}
+
+.hero-copy > p:not(.eyebrow) {
+  max-width: 350px;
+  margin-top: 18px;
+  color: #b7c0cc;
+  font-size: 15px;
+}
+
+.hero-actions {
+  margin-top: 22px;
+}
+
+.primary-cta {
+  background: #b6ff3b;
+  border-color: #b6ff3b;
+  color: #071006;
+}
+
+.secondary-cta {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.hero-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 350px;
+  margin-top: 22px;
+}
+
+.hero-metrics div {
+  min-height: 62px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.atlas-shell {
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+.atlas-toolbar {
+  position: absolute;
+  z-index: 8;
+  top: 14px;
+  left: 14px;
+  right: auto;
+  width: min(360px, calc(100% - 360px));
+  grid-template-columns: 1fr;
+  padding: 10px;
+  margin: 0;
+  background: rgba(5, 9, 13, 0.72);
+}
+
+.atlas-toolbar h2 {
+  font-size: clamp(18px, 1.7vw, 26px);
+}
+
+.atlas-toolbar .controls {
+  display: none;
+}
+
+.controls {
+  grid-template-columns: minmax(130px, 1fr) 168px;
+  gap: 8px;
+}
+
+.search-control {
+  gap: 5px;
+}
+
+.search-control input,
+.mode-control {
+  min-height: 38px;
+}
+
+.mode-button {
+  font-size: 11px;
+}
+
+.map-stage {
+  height: 100%;
+  min-height: 560px;
+  max-height: none;
+  border-color: rgba(221, 230, 240, 0.1);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(40, 199, 183, 0.12), transparent 20rem),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    rgba(8, 13, 19, 0.58);
+  background-size: auto, 46px 46px, 46px 46px, auto;
+}
+
+#networkGraph {
+  min-height: 560px;
+  max-height: none;
+}
+
+.profile-panel {
+  position: absolute;
+  z-index: 9;
+  top: 96px;
+  right: 18px;
+  width: min(292px, 27vw);
+  height: min(410px, calc(100vh - 280px));
+  min-height: 300px;
+  max-height: none;
+  grid-column: auto;
+  grid-row: auto;
+  padding: 16px;
+  background: rgba(10, 15, 21, 0.86);
+}
+
+.profile-panel h2 {
+  font-size: clamp(23px, 2vw, 32px);
+}
+
+.profile-panel .detail-stack .detail-item:nth-child(n + 4) {
+  display: none;
+}
+
+.detail-stack {
+  gap: 8px;
+}
+
+.detail-item {
+  padding: 11px;
+}
+
+.orbit-card {
+  width: 136px;
+  min-height: 62px;
+  padding: 10px 12px;
+  background: rgba(6, 10, 15, 0.78);
+}
+
+.orbit-card-builders {
+  left: 44%;
+  top: 16%;
+}
+
+.orbit-card-projects {
+  right: 31%;
+  top: 28%;
+}
+
+.orbit-card-demos {
+  right: 32%;
+  top: 53%;
+}
+
+.orbit-card-profiles {
+  left: 45%;
+  bottom: 11%;
+}
+
+.graph-node text:not(.core-label) {
+  display: none;
+}
+
+.graph-node.is-selected text,
+.graph-node.is-path text {
+  display: block;
+}
+
+.graph-node.is-dimmed {
+  opacity: 0.34;
+}
+
+.world-node {
+  background: rgba(6, 10, 15, 0.7);
+}
+
+.world-node-nyc {
+  left: 31%;
+  top: 50%;
+}
+
+.world-node-shenzhen {
+  right: 16%;
+  top: 51%;
+}
+
+.hero-lower {
+  grid-template-columns: minmax(300px, 0.4fr) minmax(0, 0.72fr) minmax(280px, 0.56fr);
+  min-height: 126px;
+}
+
+.activity-panel,
+.demo-wall,
+.network-hero .connection-tray {
+  box-shadow: none;
+  background: rgba(5, 9, 13, 0.58);
+}
+
+.activity-panel {
+  padding: 12px 14px;
+}
+
+.activity-row {
+  min-height: 28px;
+}
+
+.demo-wall {
+  padding: 12px;
+}
+
+.demo-tile,
+.demo-tile img {
+  min-height: 88px;
+}
+
+.network-hero .connection-tray {
+  max-height: 142px;
+  padding: 12px;
+}
+
+.path-prompt {
+  min-height: 34px;
+  font-size: 12px;
+}
+
 @media (max-width: 1320px) {
   h1 {
     max-width: none;
@@ -1656,6 +1917,13 @@ h3 {
   }
 
   .profile-panel {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    max-height: none;
     padding: 16px;
   }
 
