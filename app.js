@@ -273,18 +273,37 @@ const asks = [
     tags: ["video", "follow-up"],
     x: 785,
     y: 610
+  },
+  {
+    id: "profile-consent",
+    name: "Profile consent",
+    kind: "ask",
+    description: "Public builder profiles are opt-in and confirmed by email before publishing.",
+    tags: ["privacy", "profiles", "approval"],
+    x: 1005,
+    y: 320
   }
 ];
 
 const meetupNodes = [
   {
     id: "nyc-ai-room",
-    name: "NYC AI room",
+    name: "NYC AI Co-working",
     kind: "meetup",
-    description: "The recurring monthly room where builders co-work, demo, and find useful connections.",
-    tags: ["meetup", "monthly", "community"],
+    description: "The center node: recurring NYC co-working, demo nights, remote sessions, profiles, and useful intros.",
+    tags: ["meetup", "monthly", "center node", "community"],
     x: 600,
     y: 370
+  },
+  {
+    id: "live-coworking",
+    name: "Opt-in live co-working",
+    kind: "meetup",
+    description:
+      "A future remote mode where builders can enter the network while working, share lightweight session context, and get useful help without publishing by default.",
+    tags: ["remote", "presence", "opt-in", "live"],
+    x: 260,
+    y: 330
   },
   {
     id: "demo-night",
@@ -315,6 +334,19 @@ const meetupNodes = [
   }
 ];
 
+const futureNodes = [
+  {
+    id: "shenzhen-node",
+    name: "Shenzhen node",
+    kind: "future",
+    description:
+      "A real future node in the network: Shenzhen is visible as coming soon, but New York remains the active center for now.",
+    tags: ["shenzhen", "future node", "coming soon"],
+    x: 1060,
+    y: 70
+  }
+];
+
 const statusLabels = {
   confirmed: "Confirmed",
   likely: "Likely",
@@ -336,9 +368,17 @@ const filters = [
 
 const links = [
   ["nyc-ai-room", "demo-night", "meetup", true],
+  ["nyc-ai-room", "live-coworking", "remote co-working", true],
   ["nyc-ai-room", "telegram-group", "community", true],
   ["nyc-ai-room", "founder-feedback", "follow-up", true],
+  ["nyc-ai-room", "shenzhen-node", "coming soon", false],
+  ["live-coworking", "profile-consent", "privacy gate", true],
+  ["live-coworking", "intros", "mid-work intros", true],
+  ["live-coworking", "users", "active testers", false],
+  ["profile-consent", "intros", "approved context", true],
+  ["intros", "nyc-ai-room", "network request", false],
   ["founder-feedback", "media-packets", "video", true],
+  ["profile-consent", "founder-feedback", "publish approval", false],
   ["telegram-group", "users", "between-event asks", false],
   ["telegram-group", "intros", "warm intros", false],
   ["demo-night", "imposter-artist", "demo", true],
@@ -398,6 +438,18 @@ const pathPrompts = [
     label: "Drew to infra intros",
     path: ["drew-miller", "green-compute", "intros", "nyc-ai-room"],
     note: "Infrastructure projects need fewer generic attendees and more specific high-signal intros."
+  },
+  {
+    id: "live-intro",
+    label: "Live session to mid-work intro",
+    path: ["live-coworking", "profile-consent", "intros", "nyc-ai-room"],
+    note: "Online presence becomes valuable only when it stays opt-in and turns current work into timely help."
+  },
+  {
+    id: "nyc-shenzhen",
+    label: "NYC to Shenzhen",
+    path: ["nyc-ai-room", "shenzhen-node"],
+    note: "Shenzhen should read as a real future expansion node, not a fake venue pin or side decoration."
   }
 ];
 
@@ -427,6 +479,7 @@ function normalize(value) {
 function allNodes() {
   return [
     ...meetupNodes.map((item) => ({ ...item, nodeType: "meetup" })),
+    ...futureNodes.map((item) => ({ ...item, nodeType: "future" })),
     ...projects.map((item) => ({ ...item, nodeType: "project" })),
     ...people.map((item) => ({ ...item, nodeType: "person" })),
     ...asks.map((item) => ({ ...item, nodeType: "ask" }))
@@ -602,7 +655,8 @@ function detailForSelected() {
         ["Stage", project.stage],
         ["Demo status", statusLabels[project.status]],
         ["Useful next move", project.need],
-        ["Network role", owner ? owner.focus : "Add builder profile"]
+        ["Network role", owner ? owner.focus : "Add builder profile"],
+        ["Publishing rule", "Project and profile details should be confirmed by the builder before public launch."]
       ]
     };
   }
@@ -624,7 +678,8 @@ function detailForSelected() {
         ["Project", linkedProjects],
         ["Needs", person.needs],
         ["Can help with", person.canHelp],
-        ["Next follow-up", person.followUp]
+        ["Next follow-up", person.followUp],
+        ["Profile state", "Private until the builder approves a public profile by email."]
       ]
     };
   }
@@ -646,6 +701,18 @@ function detailForSelected() {
 
   const meetup = meetupNodes.find((item) => item.id === state.selectedId);
   if (meetup) {
+    const liveRows =
+      meetup.id === "live-coworking"
+        ? [
+            ["Mode", "Optional remote co-working session"],
+            ["Signal", "What you are working on, current blocker, and useful help"],
+            ["Privacy default", "Presence and session context are opt-in; public profile requires approval"]
+          ]
+        : [
+            ["Cadence", "Regular monthly co-working and demos"],
+            ["Job", "Turn one room into a durable builder graph"],
+            ["Success signal", "Useful intros, better demos, and follow-up records after each event"]
+          ];
     return {
       type: "Meetup surface",
       title: meetup.name,
@@ -655,10 +722,22 @@ function detailForSelected() {
         ["Show demos", "demo-night"],
         ["Show follow-up", "founder-feedback"]
       ],
+      rows: liveRows
+    };
+  }
+
+  const future = futureNodes.find((item) => item.id === state.selectedId);
+  if (future) {
+    return {
+      type: "Future node",
+      title: future.name,
+      subtitle: future.description,
+      tags: future.tags,
+      actions: [["Show NYC center", "nyc-ai-room"]],
       rows: [
-        ["Cadence", "Regular monthly co-working and demos"],
-        ["Job", "Turn one room into a durable builder graph"],
-        ["Success signal", "Useful intros, better demos, and follow-up records after each event"]
+        ["State", "Coming soon"],
+        ["Role", "Future expansion node in the same builder graph"],
+        ["Current emphasis", "Keep New York active and make Shenzhen visible without pretending it is launched"]
       ]
     };
   }
@@ -688,7 +767,7 @@ function renderDetail() {
 }
 
 function nodeVisible(node) {
-  if (node.nodeType === "ask" || node.nodeType === "meetup") return state.mode === "all";
+  if (node.nodeType === "ask" || node.nodeType === "meetup" || node.nodeType === "future") return state.mode === "all";
   if (node.nodeType === "project") return visibleProjects().some((project) => project.id === node.id);
   return visiblePeople().some((person) => person.id === node.id);
 }
@@ -723,8 +802,11 @@ function renderGraph() {
             ? "var(--coral)"
             : node.nodeType === "ask"
               ? "var(--gold)"
-              : "var(--violet)";
-      const radius = node.nodeType === "meetup" ? 34 : node.nodeType === "ask" ? 26 : 30;
+              : node.nodeType === "future"
+                ? "var(--muted-2)"
+                : "var(--violet)";
+      const radius =
+        node.nodeType === "meetup" ? 34 : node.nodeType === "ask" ? 26 : node.nodeType === "future" ? 24 : 30;
       const shape =
         node.nodeType === "project"
           ? `<rect x="${node.x - 31}" y="${node.y - 31}" width="62" height="62" rx="10" fill="${fill}" />`
@@ -732,12 +814,14 @@ function renderGraph() {
       const labelY = node.y + radius + 23;
       const subLabel =
         node.nodeType === "project"
-          ? node.stage
-          : node.nodeType === "person"
-            ? "builder"
-            : node.nodeType === "ask"
-              ? "ask"
-              : "meetup";
+            ? node.stage
+            : node.nodeType === "person"
+              ? "builder"
+              : node.nodeType === "ask"
+                ? "ask"
+                : node.nodeType === "future"
+                  ? "coming soon"
+                  : "meetup";
       return `
         <g class="graph-node ${dimmed ? "is-dimmed" : ""} ${selected ? "is-selected" : ""} ${inPath ? "is-path" : ""}" data-select="${node.id}" tabindex="0" role="button" aria-label="${node.name}">
           ${shape}

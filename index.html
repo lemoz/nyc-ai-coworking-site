@@ -13,31 +13,36 @@
         <span class="brand-mark" aria-hidden="true">NYC AI</span>
         <span>
           <strong>NYC AI Co-working</strong>
-          <small>Monthly meetup and builder graph</small>
+          <small>AI-enabled co-working network</small>
         </span>
       </a>
       <nav class="nav" aria-label="Primary">
         <a href="#atlas">Graph</a>
         <a href="#projects">Projects</a>
+        <a href="#live">Live</a>
         <a href="#people">People</a>
-        <a href="#meetup">Meetup</a>
+        <a class="nav-cta" href="#meetup">RSVP</a>
       </nav>
     </header>
 
     <main id="top">
       <section class="hero" id="atlas" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">Regular NYC builder meetup</p>
-          <h1 id="hero-title">A living graph for NYC AI co-working.</h1>
+          <p class="eyebrow">AI-enabled co-working network</p>
+          <h1 id="hero-title">Build faster inside NYC's AI co-working network.</h1>
           <p>
-            A recurring meetup where builders demo projects, meet useful people, and leave behind a clearer map of the network.
+            Show up in New York or enter the network remotely. Demo projects, co-work in opt-in sessions, get mid-work introductions, and turn each meetup into a useful builder graph.
           </p>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="primary-cta" href="#meetup">RSVP next meetup</a>
+            <a class="secondary-cta" href="#projects">View demos</a>
+          </div>
         </div>
 
         <div class="hero-stats" aria-label="Meetup operating targets">
-          <div><strong>Monthly</strong><span>co-working and demos</span></div>
-          <div><strong>4-6</strong><span>project demos</span></div>
-          <div><strong>5+</strong><span>useful intros per event</span></div>
+          <div><strong>Monthly</strong><span>NYC co-working and demos</span></div>
+          <div><strong>Opt-in</strong><span>remote live work sessions</span></div>
+          <div><strong>Shenzhen</strong><span>future network node</span></div>
         </div>
       </section>
 
@@ -45,7 +50,7 @@
         <div class="atlas-toolbar">
           <div>
             <p class="eyebrow">Network atlas</p>
-            <h2>Click a node. Find the connection path.</h2>
+            <h2>NYC AI Co-working is the center node.</h2>
           </div>
 
           <div class="controls">
@@ -70,6 +75,7 @@
               <span><i class="legend-dot project-dot"></i>Project</span>
               <span><i class="legend-dot ask-dot"></i>Ask</span>
               <span><i class="legend-dot meetup-dot"></i>Meetup</span>
+              <span><i class="legend-dot future-dot"></i>Future node</span>
             </div>
           </div>
 
@@ -84,10 +90,44 @@
           <div>
             <p class="eyebrow">Connection game</p>
             <h3>WikiHole-style prompts</h3>
-            <p>Use the graph to test whether this meetup creates real paths between demos, builders, needs, and follow-ups.</p>
+            <p>Use the graph to test whether the network creates real paths between demos, builders, live sessions, asks, and follow-ups.</p>
           </div>
           <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
           <div id="activePath" class="active-path" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="live" class="live-section" aria-labelledby="live-title">
+        <div class="section-intro">
+          <div>
+            <p class="eyebrow">Opt-in live layer</p>
+            <h2 id="live-title">Online should mean co-working, not surveillance.</h2>
+          </div>
+          <p>
+            A future member mode where builders can enter the network remotely, share a lightweight session context, and get useful help while they are actually working.
+          </p>
+        </div>
+        <div class="live-grid">
+          <article>
+            <span class="ledger-icon">01</span>
+            <h3>Live work session</h3>
+            <p>A builder can mark themselves active, add what they are working on, and optionally stream, screen-share, or post a short session note.</p>
+          </article>
+          <article>
+            <span class="ledger-icon">02</span>
+            <h3>Context, not intrusion</h3>
+            <p>The useful unit is current project, blocker, and ask. Presence and work details stay opt-in and can be private by default.</p>
+          </article>
+          <article>
+            <span class="ledger-icon">03</span>
+            <h3>Mid-work intros</h3>
+            <p>When two active builders have overlapping projects, asks, or skills, the system can suggest a low-friction intro at the right moment.</p>
+          </article>
+          <article>
+            <span class="ledger-icon">04</span>
+            <h3>Profile approval</h3>
+            <p>Public profiles start with demo people, then this month's builders, then checked-in members, each confirmed by email before publishing.</p>
+          </article>
         </div>
       </section>
 
@@ -115,7 +155,7 @@
         <div>
           <div class="section-intro">
             <div>
-              <p class="eyebrow">People profiles</p>
+              <p class="eyebrow">Opt-in builder profiles</p>
               <h2 id="people-title">Who shows up and what they can move forward</h2>
             </div>
           </div>
@@ -133,10 +173,10 @@
 
       <section id="meetup" class="meetup-section" aria-labelledby="meetup-title">
         <div>
-          <p class="eyebrow">Recurring meetup</p>
+          <p class="eyebrow">RSVP next meetup</p>
           <h2 id="meetup-title">The event is the spike. The network is the product.</h2>
           <p>
-            Every month should leave behind a cleaner map: who attended, what they are building, what is blocked, who they should meet, and what should be followed up before the next room.
+            The primary CTA should point to the current Luma or RSVP link as soon as the next event page is live. Until then, the site explains the format: recurring co-working, demo slots, opt-in profiles, and a live network layer that can grow beyond New York.
           </p>
         </div>
         <div class="ledger-grid">
