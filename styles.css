@@ -186,11 +186,11 @@ main {
 .card-btn:focus-visible,
 .pipeline-card:focus-visible,
 .path-prompt:focus-visible,
+.graph-tools button:focus-visible,
 .hero-demo-row a:focus-visible,
 .hero-demo-row button:focus-visible,
 .search input:focus-visible,
-.graph-node:focus-visible circle,
-.graph-node:focus-visible rect {
+.graph-node:focus-visible .node-shape {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
@@ -340,23 +340,25 @@ main {
 
 .atlas-head {
   position: absolute;
-  top: clamp(16px, 3vw, 34px);
+  top: clamp(12px, 2vw, 22px);
   right: clamp(16px, 4vw, 48px);
   z-index: 9;
-  width: min(520px, 48vw);
+  width: min(520px, 44vw);
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 14px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(5, 6, 8, 0.58);
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
   backdrop-filter: blur(18px);
+  pointer-events: none;
 }
 
+.atlas-title { display: none; }
 .atlas-title .eyebrow { margin-bottom: 6px; }
 .atlas-title h2 { font-size: clamp(15px, 1.25vw, 18px); line-height: 1.2; }
 .atlas-hint {
@@ -367,7 +369,20 @@ main {
   line-height: 1.35;
 }
 
-.atlas-controls { display: flex; gap: 8px; align-items: center; }
+.atlas-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.search,
+.modes,
+.graph-tools {
+  pointer-events: auto;
+}
 
 .search input {
   width: clamp(160px, 22vw, 230px);
@@ -405,6 +420,32 @@ main {
 .mode + .mode { border-left: 1px solid var(--line); }
 .mode.is-active { background: var(--accent); color: #050608; }
 
+.graph-tools {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: rgba(7, 10, 14, 0.72);
+}
+
+.graph-tools button {
+  min-width: 36px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.graph-tools button + button { border-left: 1px solid var(--line); }
+
+.graph-tools button:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--ink);
+}
+
 .map-stage {
   position: relative;
   height: 100%;
@@ -435,6 +476,12 @@ main {
   min-height: 100%;
   position: relative;
   z-index: 2;
+  cursor: grab;
+  touch-action: none;
+}
+
+#networkGraph.is-dragging {
+  cursor: grabbing;
 }
 
 .legend {
@@ -469,67 +516,148 @@ main {
 .dot-future { background: var(--muted-2); }
 
 /* ---------- Graph nodes ---------- */
+.graph-backdrop { opacity: 0.84; pointer-events: none; }
+
+.orbit {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.075);
+  stroke-width: 1.2;
+  stroke-dasharray: 7 11;
+  vector-effect: non-scaling-stroke;
+}
+
+.orbit-mid {
+  stroke: rgba(198, 242, 78, 0.16);
+}
+
+.axis-line {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
 .graph-link {
-  stroke: rgba(220, 229, 240, 0.16);
-  stroke-width: 1.6;
+  stroke: rgba(220, 229, 240, 0.18);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
   transition: opacity 160ms ease, stroke 160ms ease, stroke-width 160ms ease;
 }
-.graph-link.is-strong { stroke: rgba(198, 242, 78, 0.34); stroke-width: 2; }
-.graph-link.is-path { stroke: var(--accent); stroke-width: 4; opacity: 1; filter: drop-shadow(0 0 8px rgba(198, 242, 78, 0.45)); }
-.graph-link.is-dimmed { opacity: 0.08; }
 
-.graph-node { cursor: pointer; outline: none; transition: opacity 160ms ease; }
-.graph-node.is-dimmed { opacity: 0.28; }
-
-.graph-node circle,
-.graph-node rect {
-  stroke: rgba(255, 255, 255, 0.82);
-  stroke-width: 2.5;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.32));
-  transition: stroke 140ms ease, stroke-width 140ms ease;
+.graph-link.is-strong {
+  stroke: rgba(198, 242, 78, 0.42);
+  stroke-width: 2.3;
 }
 
-.graph-node:hover circle,
-.graph-node:hover rect { stroke: #fff; }
+.graph-link.is-direct {
+  stroke: rgba(79, 209, 197, 0.58);
+  stroke-width: 2.9;
+}
 
-.graph-node.is-selected circle,
-.graph-node.is-selected rect,
-.graph-node.is-path circle,
-.graph-node.is-path rect {
+.graph-link.is-path {
+  stroke: var(--accent);
+  stroke-width: 4.2;
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(198, 242, 78, 0.45));
+}
+
+.graph-link.is-muted { opacity: 0.1; }
+
+.edge-label {
+  fill: #d9e2eb;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0;
+  paint-order: stroke;
+  pointer-events: none;
+  stroke: rgba(5, 6, 8, 0.94);
+  stroke-linejoin: round;
+  stroke-width: 5px;
+}
+
+.edge-label.is-path { fill: var(--accent); }
+
+.graph-node {
+  cursor: pointer;
+  outline: none;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.graph-node.is-muted { opacity: 0.16; }
+
+.graph-hit {
+  fill: transparent;
+  pointer-events: all;
+  stroke: transparent;
+}
+
+.graph-node .node-shape {
+  stroke: rgba(255, 255, 255, 0.78);
+  stroke-width: 2.2;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.36));
+  transition: filter 160ms ease, stroke 140ms ease, stroke-width 140ms ease;
+  vector-effect: non-scaling-stroke;
+}
+
+.graph-node:hover .node-shape {
+  stroke: #fff;
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.24)) drop-shadow(0 12px 20px rgba(0, 0, 0, 0.36));
+}
+
+.graph-node.is-selected .node-shape,
+.graph-node.is-path .node-shape {
   stroke: var(--accent);
   stroke-width: 4;
+  filter: drop-shadow(0 0 18px rgba(198, 242, 78, 0.56)) drop-shadow(0 18px 34px rgba(0, 0, 0, 0.45));
+}
+
+.graph-node.is-core .node-shape {
+  stroke: var(--accent);
+  stroke-width: 3.6;
+  filter: drop-shadow(0 0 30px rgba(198, 242, 78, 0.56)) drop-shadow(0 22px 60px rgba(0, 0, 0, 0.62));
+}
+
+.graph-node .core-ring {
+  stroke: rgba(79, 209, 197, 0.38);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 7;
+  vector-effect: non-scaling-stroke;
+}
+
+.graph-node.is-future .node-shape {
+  fill: rgba(102, 110, 121, 0.4);
+  stroke-dasharray: 6 6;
 }
 
 .graph-node text {
+  display: none;
   fill: var(--ink);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 0;
+  paint-order: stroke;
   pointer-events: none;
+  stroke: rgba(5, 6, 8, 0.94);
+  stroke-linejoin: round;
+  stroke-width: 5px;
 }
 
-.graph-node .sub-label { fill: var(--muted); font-size: 12px; font-weight: 600; }
-.graph-node .core-label { fill: var(--ink); font-size: 22px; font-weight: 800; }
-
-/* Keep the atlas calm: only label the center, selected, and path nodes. */
-.graph-node text:not(.core-label) { display: none; }
-.graph-node.is-selected text,
-.graph-node.is-path text { display: block; }
-
-.graph-node.is-core circle {
-  fill: rgba(6, 12, 16, 0.96);
-  stroke: var(--accent);
-  stroke-width: 3.5;
-  filter: drop-shadow(0 0 28px rgba(198, 242, 78, 0.5)) drop-shadow(0 20px 56px rgba(0, 0, 0, 0.58));
+.graph-node .sub-label {
+  fill: #c6ced8;
+  font-size: 10.5px;
+  font-weight: 760;
 }
 
-.graph-node.is-future {
-  opacity: 0.72;
+.graph-node .core-label {
+  display: block;
+  fill: var(--ink);
+  font-size: 20px;
+  font-weight: 900;
+  stroke-width: 4px;
 }
 
-.graph-node.is-future circle {
-  stroke-dasharray: 6 6;
-  fill: rgba(102, 110, 121, 0.42);
-}
+.graph-node.is-labeled .node-label,
+.graph-node.is-labeled .sub-label { display: block; }
 
 .trust-strip {
   width: min(var(--maxw), calc(100% - 32px));
@@ -584,10 +712,10 @@ main {
 .profile-panel {
   position: absolute;
   right: clamp(16px, 4vw, 48px);
-  bottom: clamp(72px, 9vh, 110px);
+  bottom: clamp(16px, 3vh, 28px);
   z-index: 7;
-  width: min(360px, 32vw);
-  max-height: min(560px, 58vh);
+  width: min(320px, 26vw);
+  max-height: min(620px, 70vh);
   overflow: auto;
   overflow-wrap: anywhere;
   background: rgba(8, 10, 14, 0.68);
@@ -606,14 +734,14 @@ main {
     rgba(255, 255, 255, 0.024);
 }
 
-.profile-panel h2 { margin-bottom: 10px; font-size: clamp(24px, 2.4vw, 32px); }
-.profile-panel > p { color: var(--muted); line-height: 1.5; }
+.profile-panel h2 { margin-bottom: 8px; font-size: clamp(21px, 2vw, 28px); line-height: 1.08; }
+.profile-panel > p { color: var(--muted); line-height: 1.42; font-size: 14px; }
 
 .profile-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 18px 0 0;
+  margin: 14px 0 0;
 }
 
 .profile-action,
@@ -633,7 +761,7 @@ main {
 .card-btn:hover,
 .pipeline-card:hover { border-color: var(--accent); background: rgba(198, 242, 78, 0.15); }
 
-.tag-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+.tag-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
 
 .tag {
   display: inline-flex;
@@ -647,10 +775,10 @@ main {
   font-weight: 600;
 }
 
-.detail-stack { display: grid; gap: 10px; margin-top: 18px; }
+.detail-stack { display: grid; gap: 8px; margin-top: 13px; }
 
 .detail-item {
-  padding: 13px;
+  padding: 10px;
   border: 1px solid var(--line);
   border-radius: 11px;
   background: rgba(255, 255, 255, 0.035);
@@ -666,7 +794,7 @@ main {
   text-transform: uppercase;
 }
 
-.detail-item strong { color: var(--ink); font-weight: 600; line-height: 1.4; }
+.detail-item strong { color: var(--ink); font-weight: 600; line-height: 1.32; font-size: 14px; }
 
 .paths h3 { margin-top: 6px; font-size: clamp(18px, 1.8vw, 22px); }
 .paths .eyebrow,
@@ -1030,13 +1158,7 @@ main {
     grid-template-columns: minmax(0, 1fr);
   }
   .atlas-head::before {
-    content: "Tap nodes for profiles";
-    color: var(--accent);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    content: none;
   }
   .atlas-title { display: none; }
   .atlas-title .eyebrow { display: none; }
@@ -1044,6 +1166,7 @@ main {
   .atlas-hint { display: none; }
   .atlas-controls {
     display: flex;
+    flex-wrap: wrap;
     width: 100%;
   }
   .atlas-controls .search { display: none; }
@@ -1051,12 +1174,13 @@ main {
   .modes { display: flex; width: 100%; }
   .mode { flex: 1; }
   .mode { min-height: 34px; padding-inline: 8px; font-size: 12px; }
-  #networkGraph {
-    height: 100%;
-    min-height: 100%;
-    transform: scale(1.22) translateY(5%);
-    transform-origin: 56% 54%;
-  }
+  .graph-tools { width: 100%; }
+  .graph-tools button { flex: 1; min-height: 32px; padding-inline: 6px; }
+  #networkGraph { height: 100%; min-height: 100%; }
+  .graph-node text { font-size: 11px; stroke-width: 4px; }
+  .graph-node .sub-label { font-size: 9px; }
+  .graph-node .core-label { font-size: 17px; }
+  .edge-label { display: none; }
   .profile-panel {
     left: 12px;
     right: 12px;
@@ -1068,6 +1192,14 @@ main {
   }
   .profile-panel h2 { font-size: 22px; }
   .profile-actions { display: none; }
+  .profile-panel .tag-list,
+  .profile-panel .detail-stack { display: none; }
+  .profile-panel > p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
   .detail-stack { gap: 7px; margin-top: 12px; }
   .detail-item { padding: 9px; }
   .legend { display: none; }

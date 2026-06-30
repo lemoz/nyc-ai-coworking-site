@@ -453,12 +453,58 @@ const pathPrompts = [
   }
 ];
 
+const graphBaseViewBox = { x: 0, y: 0, width: 1200, height: 760 };
+const graphMobileViewBox = { x: 260, y: -220, width: 760, height: 650 };
+
+const graphLayout = {
+  "nyc-ai-room": [690, 365],
+  "demo-night": [690, 160],
+  "live-coworking": [420, 355],
+  "telegram-group": [505, 565],
+  "founder-feedback": [760, 565],
+  "shenzhen-node": [1065, 125],
+  "imposter-artist": [790, 255],
+  got2eat: [500, 225],
+  rem: [825, 300],
+  grantsville: [805, 445],
+  somo: [315, 470],
+  "green-compute": [585, 650],
+  "codify-opennyc": [790, 665],
+  "arf-ai": [235, 645],
+  "advik-lall": [830, 92],
+  "jaison-jayaraj": [410, 112],
+  "josh-kim": [1030, 198],
+  "brian-cheng": [160, 445],
+  "jeremiah-richie": [1110, 390],
+  "drew-miller": [520, 720],
+  "arion-hardison": [1088, 700],
+  "juan-petter": [120, 662],
+  feedback: [705, 510],
+  users: [440, 300],
+  intros: [935, 445],
+  "gtm-feedback": [385, 610],
+  "media-packets": [805, 625],
+  "profile-consent": [285, 250]
+};
+
+const defaultAtlasIds = new Set([
+  "nyc-ai-room",
+  "demo-night",
+  "live-coworking",
+  "telegram-group",
+  "founder-feedback",
+  "shenzhen-node",
+  ...projects.filter((project) => ["confirmed", "likely"].includes(project.status)).map((project) => project.id)
+]);
+
 const state = {
   filter: "All",
   mode: "all",
   query: "",
   selectedId: "nyc-ai-room",
-  activePathId: null
+  activePathId: null,
+  graphViewBox: null,
+  graphUserMoved: false
 };
 
 const projectGrid = document.querySelector("#projectGrid");
@@ -651,10 +697,10 @@ function detailForSelected() {
       ].filter((item) => item[1]),
       rows: [
         ["Builder", project.owner],
-        ["Theme", project.theme],
+        ["Useful next move", project.need],
         ["Stage", project.stage],
         ["Demo status", statusLabels[project.status]],
-        ["Useful next move", project.need],
+        ["Theme", project.theme],
         ["Network role", owner ? owner.focus : "Add builder profile"],
         ["Publishing rule", "Project and profile details should be confirmed by the builder before public launch."]
       ]
@@ -748,6 +794,8 @@ function detailForSelected() {
 function renderDetail() {
   const detail = detailForSelected();
   if (!detail) return;
+  const rowLimit = detail.type === "Project" ? 2 : detail.type === "Person" ? 3 : 2;
+  const visibleRows = detail.rows.slice(0, rowLimit);
 
   profilePanel.innerHTML = `
     <p class="eyebrow">${detail.type}</p>
@@ -760,42 +808,283 @@ function renderDetail() {
     </div>
     <div class="tag-list">${detail.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
     <div class="detail-stack">
-      ${detail.rows
+      ${visibleRows
         .map(([label, value]) => `<div class="detail-item"><span>${label}</span><strong>${value}</strong></div>`)
         .join("")}
     </div>`;
 }
 
+function defaultGraphViewBox() {
+  const mobile = window.matchMedia("(max-width: 720px)").matches;
+  return { ...(mobile ? graphMobileViewBox : graphBaseViewBox) };
+}
+
+function ensureGraphViewBox() {
+  if (!state.graphViewBox) state.graphViewBox = defaultGraphViewBox();
+  return state.graphViewBox;
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function clampGraphViewBox(viewBox) {
+  const width = clamp(viewBox.width, 420, graphBaseViewBox.width);
+  const height = clamp(viewBox.height, 300, graphBaseViewBox.height);
+  const marginX = 90;
+  const marginY = 80;
+  const minX = graphBaseViewBox.x - marginX;
+  const minY = graphBaseViewBox.y - marginY;
+  const maxX = graphBaseViewBox.x + graphBaseViewBox.width - width + marginX;
+  const maxY = graphBaseViewBox.y + graphBaseViewBox.height - height + marginY;
+
+  return {
+    x: clamp(viewBox.x, minX, maxX),
+    y: clamp(viewBox.y, minY, maxY),
+    width,
+    height
+  };
+}
+
+function setGraphViewBox(viewBox, userMoved = true) {
+  state.graphViewBox = clampGraphViewBox(viewBox);
+  state.graphUserMoved = userMoved;
+  renderGraph();
+}
+
+function resetGraphView() {
+  setGraphViewBox(defaultGraphViewBox(), false);
+}
+
+function zoomGraph(factor, event) {
+  const viewBox = ensureGraphViewBox();
+  const rect = networkGraph.getBoundingClientRect();
+  const anchorX = event && rect.width ? clamp((event.clientX - rect.left) / rect.width, 0, 1) : 0.5;
+  const anchorY = event && rect.height ? clamp((event.clientY - rect.top) / rect.height, 0, 1) : 0.5;
+  const nextWidth = viewBox.width * factor;
+  const nextHeight = viewBox.height * factor;
+  const anchorGraphX = viewBox.x + viewBox.width * anchorX;
+  const anchorGraphY = viewBox.y + viewBox.height * anchorY;
+
+  setGraphViewBox({
+    x: anchorGraphX - nextWidth * anchorX,
+    y: anchorGraphY - nextHeight * anchorY,
+    width: nextWidth,
+    height: nextHeight
+  });
+}
+
+function positionedNode(node) {
+  const position = graphLayout[node.id];
+  if (!position) return node;
+  return { ...node, x: position[0], y: position[1] };
+}
+
+function positionedNodes() {
+  return allNodes().map(positionedNode);
+}
+
+function focusGraphOnNode(id, render = true) {
+  const node = positionedNodes().find((item) => item.id === id);
+  if (!node) return;
+  const current = ensureGraphViewBox();
+  const mobile = window.matchMedia("(max-width: 720px)").matches;
+  const width = Math.min(current.width, mobile ? 620 : 760);
+  const height = Math.min(current.height, mobile ? 500 : 500);
+
+  state.graphViewBox = clampGraphViewBox({
+    x: node.x - width * 0.5,
+    y: node.y - height * 0.52,
+    width,
+    height
+  });
+  state.graphUserMoved = true;
+  if (render) renderGraph();
+}
+
+function linkedIdsFor(id) {
+  const ids = new Set([id]);
+  links.forEach((link) => {
+    if (link.source === id) ids.add(link.target);
+    if (link.target === id) ids.add(link.source);
+  });
+  return ids;
+}
+
+function neighborhoodIdsFor(id) {
+  const ids = linkedIdsFor(id);
+  ids.add("nyc-ai-room");
+  return ids;
+}
+
 function nodeVisible(node) {
-  if (node.nodeType === "ask" || node.nodeType === "meetup" || node.nodeType === "future") return state.mode === "all";
+  if (node.id === "nyc-ai-room") return true;
+  if (node.nodeType === "ask") return state.mode === "all" && Boolean(state.query);
+  if (node.nodeType === "meetup" || node.nodeType === "future") return state.mode === "all";
   if (node.nodeType === "project") return visibleProjects().some((project) => project.id === node.id);
-  return visiblePeople().some((person) => person.id === node.id);
+  return (state.mode === "people" || Boolean(state.query)) && visiblePeople().some((person) => person.id === node.id);
+}
+
+function visibleGraphIds(nodes) {
+  const pathNodes = activePathSet();
+  if (pathNodes.size) return new Set([...pathNodes, "nyc-ai-room"]);
+
+  if (state.selectedId !== "nyc-ai-room") {
+    return neighborhoodIdsFor(state.selectedId);
+  }
+
+  const ids = new Set();
+  nodes.forEach((node) => {
+    if (
+      nodeVisible(node) &&
+      (node.nodeType !== "project" || state.mode !== "all" || state.query || state.filter !== "All" || defaultAtlasIds.has(node.id))
+    ) {
+      ids.add(node.id);
+      return;
+    }
+    if (defaultAtlasIds.has(node.id) && node.nodeType !== "project") ids.add(node.id);
+  });
+  ids.add("nyc-ai-room");
+  return ids;
+}
+
+function linkIsVisible(link, visibleIds, pathEdges) {
+  if (!visibleIds.has(link.source) || !visibleIds.has(link.target)) return false;
+  if (pathEdges.size) return pathEdges.has(`${link.source}:${link.target}`);
+  if (link.source === state.selectedId || link.target === state.selectedId) return true;
+  if (state.selectedId === "nyc-ai-room") {
+    return (
+      link.strong &&
+      (link.source === "nyc-ai-room" ||
+        link.target === "nyc-ai-room" ||
+        link.source === "demo-night" ||
+        link.target === "demo-night")
+    );
+  }
+  return link.strong || link.source === "nyc-ai-room" || link.target === "nyc-ai-room";
+}
+
+function nodeSubtitle(node) {
+  if (node.nodeType === "project") return node.stage;
+  if (node.nodeType === "person") return "builder";
+  if (node.nodeType === "ask") return "ask";
+  if (node.nodeType === "future") return "coming soon";
+  return "meetup";
+}
+
+function labelLines(label) {
+  if (label.length <= 16) return [label];
+  const words = label.split(" ");
+  const lines = [];
+  let current = "";
+
+  words.forEach((word) => {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length > 16 && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = next;
+    }
+  });
+
+  if (current) lines.push(current);
+  return lines.slice(0, 2);
+}
+
+function nodeLabelMarkup(node, labelY) {
+  const lines = labelLines(node.name);
+  const titleLines = lines
+    .map((line, index) => `<tspan x="${node.x}" dy="${index === 0 ? 0 : 16}">${line}</tspan>`)
+    .join("");
+  const subY = labelY + lines.length * 16 + 1;
+
+  return `<text class="node-label" x="${node.x}" y="${labelY}" text-anchor="middle">${titleLines}</text>
+    <text class="sub-label" x="${node.x}" y="${subY}" text-anchor="middle">${nodeSubtitle(node)}</text>`;
+}
+
+function nodeShapeMarkup(node, fill) {
+  if (node.id === "nyc-ai-room") {
+    return `<circle class="node-shape" cx="${node.x}" cy="${node.y}" r="62" fill="rgba(6, 12, 16, 0.96)" />
+      <circle class="core-ring" cx="${node.x}" cy="${node.y}" r="42" fill="none" />`;
+  }
+
+  if (node.nodeType === "project") {
+    return `<rect class="node-shape" x="${node.x - 35}" y="${node.y - 27}" width="70" height="54" rx="11" fill="${fill}" />`;
+  }
+
+  if (node.nodeType === "ask") {
+    return `<rect class="node-shape" x="${node.x - 21}" y="${node.y - 21}" width="42" height="42" rx="8" transform="rotate(45 ${node.x} ${node.y})" fill="${fill}" />`;
+  }
+
+  if (node.nodeType === "meetup") {
+    return `<rect class="node-shape" x="${node.x - 43}" y="${node.y - 25}" width="86" height="50" rx="17" fill="${fill}" />`;
+  }
+
+  const radius = node.nodeType === "future" ? 26 : 27;
+  return `<circle class="node-shape" cx="${node.x}" cy="${node.y}" r="${radius}" fill="${fill}" />`;
+}
+
+function nodeHitRadius(node) {
+  if (node.id === "nyc-ai-room") return 78;
+  if (node.nodeType === "project" || node.nodeType === "meetup") return 48;
+  return 42;
+}
+
+function nodeLabelY(node) {
+  if (node.id === "nyc-ai-room") return node.y - 6;
+  if (node.nodeType === "project") return node.y + 48;
+  if (node.nodeType === "meetup") return node.y + 47;
+  if (node.nodeType === "ask") return node.y + 45;
+  return node.y + 45;
+}
+
+function nodeIsLabeled(node, neighborIds, pathNodes) {
+  if (node.id === "nyc-ai-room") return true;
+  if (node.id === state.selectedId || neighborIds.has(node.id) || pathNodes.has(node.id)) return true;
+  if (state.query && nodeVisible(node)) return true;
+  return state.selectedId === "nyc-ai-room" && defaultAtlasIds.has(node.id) && node.nodeType !== "person" && node.nodeType !== "ask";
 }
 
 function renderGraph() {
-  const nodes = allNodes();
+  const nodes = positionedNodes();
   const map = new Map(nodes.map((node) => [node.id, node]));
-  const visibleIds = new Set(nodes.filter(nodeVisible).map((node) => node.id));
+  const viewBox = ensureGraphViewBox();
+  networkGraph.setAttribute("viewBox", `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+
+  const visibleIds = visibleGraphIds(nodes);
+  const neighborIds = neighborhoodIdsFor(state.selectedId);
   const pathNodes = activePathSet();
   const pathEdges = activePathEdges();
+  const edgeLabels = [];
 
   const linkMarkup = links
     .map((link) => {
       const source = map.get(link.source);
       const target = map.get(link.target);
       if (!source || !target) return "";
-      const visible = visibleIds.has(source.id) && visibleIds.has(target.id);
+      if (!linkIsVisible(link, visibleIds, pathEdges)) return "";
       const inPath = pathEdges.has(`${source.id}:${target.id}`);
-      return `<line class="graph-link ${link.strong ? "is-strong" : ""} ${inPath ? "is-path" : ""} ${!visible || (pathNodes.size && !inPath) ? "is-dimmed" : ""}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" />`;
+      const direct = link.source === state.selectedId || link.target === state.selectedId;
+      const muted = pathNodes.size > 0 && !inPath;
+      const labelEdge = !muted && (inPath || direct);
+      if (labelEdge) {
+        edgeLabels.push(
+          `<text class="edge-label ${inPath ? "is-path" : ""}" x="${(source.x + target.x) / 2}" y="${(source.y + target.y) / 2 - 7}" text-anchor="middle">${link.label}</text>`
+        );
+      }
+      return `<line class="graph-link ${link.strong ? "is-strong" : ""} ${direct ? "is-direct" : ""} ${inPath ? "is-path" : ""} ${muted ? "is-muted" : ""}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" />`;
     })
     .join("");
 
   const nodeMarkup = nodes
     .map((node) => {
-      const dimmed = !visibleIds.has(node.id) || (pathNodes.size > 0 && !pathNodes.has(node.id));
+      if (!visibleIds.has(node.id)) return "";
       const selected = node.id === state.selectedId;
+      const labeled = nodeIsLabeled(node, neighborIds, pathNodes);
       const inPath = pathNodes.has(node.id);
       const isCore = node.id === "nyc-ai-room";
+      const muted = pathNodes.size > 0 && !inPath;
       const fill =
         node.nodeType === "project"
           ? "var(--teal)"
@@ -806,37 +1095,30 @@ function renderGraph() {
               : node.nodeType === "future"
                 ? "var(--muted-2)"
                 : "var(--violet)";
-      const radius =
-        isCore ? 62 : node.nodeType === "meetup" ? 34 : node.nodeType === "ask" ? 26 : node.nodeType === "future" ? 24 : 30;
-      const shape =
-        node.nodeType === "project"
-          ? `<rect x="${node.x - 31}" y="${node.y - 31}" width="62" height="62" rx="10" fill="${fill}" />`
-          : `<circle cx="${node.x}" cy="${node.y}" r="${radius}" fill="${fill}" />`;
-      const labelY = node.y + radius + 23;
-      const subLabel =
-        node.nodeType === "project"
-          ? node.stage
-            : node.nodeType === "person"
-              ? "builder"
-              : node.nodeType === "ask"
-                ? "ask"
-                : node.nodeType === "future"
-                  ? "coming soon"
-                  : "meetup";
+      const labelY = nodeLabelY(node);
       const labelMarkup = isCore
         ? `<text class="core-label" x="${node.x}" y="${node.y - 5}" text-anchor="middle">NYC AI</text>
            <text class="core-label" x="${node.x}" y="${node.y + 22}" text-anchor="middle">Co-working</text>`
-        : `<text x="${node.x}" y="${labelY}" text-anchor="middle">${node.name}</text>
-           <text class="sub-label" x="${node.x}" y="${labelY + 18}" text-anchor="middle">${subLabel}</text>`;
+        : nodeLabelMarkup(node, labelY);
       return `
-        <g class="graph-node ${isCore ? "is-core" : ""} ${node.nodeType === "future" ? "is-future" : ""} ${dimmed ? "is-dimmed" : ""} ${selected ? "is-selected" : ""} ${inPath ? "is-path" : ""}" data-select="${node.id}" tabindex="0" role="button" aria-label="${node.name}">
-          ${shape}
+        <g class="graph-node ${isCore ? "is-core" : ""} is-${node.nodeType} ${node.nodeType === "future" ? "is-future" : ""} ${muted ? "is-muted" : ""} ${selected ? "is-selected" : ""} ${labeled ? "is-labeled" : ""} ${inPath ? "is-path" : ""}" data-select="${node.id}" tabindex="0" role="button" aria-label="${node.name}">
+          <circle class="graph-hit" cx="${node.x}" cy="${node.y}" r="${nodeHitRadius(node)}"></circle>
+          ${nodeShapeMarkup(node, fill)}
           ${labelMarkup}
         </g>`;
     })
     .join("");
 
-  networkGraph.innerHTML = linkMarkup + nodeMarkup;
+  networkGraph.innerHTML = `
+    <g class="graph-backdrop" aria-hidden="true">
+      <circle class="orbit orbit-outer" cx="690" cy="365" r="330"></circle>
+      <circle class="orbit orbit-mid" cx="690" cy="365" r="215"></circle>
+      <line class="axis-line" x1="690" y1="80" x2="690" y2="700"></line>
+      <line class="axis-line" x1="250" y1="365" x2="1100" y2="365"></line>
+    </g>
+    <g class="graph-links">${linkMarkup}</g>
+    <g class="graph-edge-labels">${edgeLabels.join("")}</g>
+    <g class="graph-nodes">${nodeMarkup}</g>`;
 }
 
 function renderPathPrompts() {
@@ -890,9 +1172,16 @@ function renderPipeline() {
 }
 
 function selectItem(id, options = {}) {
+  if (state.activePathId && !activePathSet().has(id)) {
+    state.activePathId = null;
+  }
   state.selectedId = id;
+  if (options.focusProfile || options.focusGraph) {
+    focusGraphOnNode(id, false);
+  }
   renderDetail();
   renderGraph();
+  renderPathPrompts();
   if (options.focusProfile) {
     document.querySelector("#atlas").scrollIntoView({ behavior: "smooth", block: "start" });
     profilePanel.animate(
@@ -928,9 +1217,28 @@ document.addEventListener("click", (event) => {
     state.activePathId = path.dataset.path;
     const prompt = activePath();
     if (prompt) state.selectedId = prompt.path[0];
+    if (prompt) focusGraphOnNode(prompt.path[0], false);
     renderDetail();
     renderGraph();
     renderPathPrompts();
+    return;
+  }
+
+  const graphZoom = event.target.closest("[data-graph-zoom]");
+  if (graphZoom) {
+    zoomGraph(Number(graphZoom.dataset.graphZoom));
+    return;
+  }
+
+  const graphFocus = event.target.closest("[data-graph-focus]");
+  if (graphFocus) {
+    focusGraphOnNode(state.selectedId);
+    return;
+  }
+
+  const graphReset = event.target.closest("[data-graph-reset]");
+  if (graphReset) {
+    resetGraphView();
     return;
   }
 
@@ -960,6 +1268,60 @@ modeButtons.forEach((button) => {
     state.mode = button.dataset.mode;
     renderAll();
   });
+});
+
+let graphDrag = null;
+
+networkGraph.addEventListener(
+  "wheel",
+  (event) => {
+    event.preventDefault();
+    zoomGraph(event.deltaY < 0 ? 0.88 : 1.12, event);
+  },
+  { passive: false }
+);
+
+networkGraph.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0 || event.target.closest("[data-select]")) return;
+  graphDrag = {
+    pointerId: event.pointerId,
+    clientX: event.clientX,
+    clientY: event.clientY,
+    viewBox: { ...ensureGraphViewBox() }
+  };
+  networkGraph.classList.add("is-dragging");
+  networkGraph.setPointerCapture(event.pointerId);
+});
+
+networkGraph.addEventListener("pointermove", (event) => {
+  if (!graphDrag || graphDrag.pointerId !== event.pointerId) return;
+  const rect = networkGraph.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  const dx = (event.clientX - graphDrag.clientX) * (graphDrag.viewBox.width / rect.width);
+  const dy = (event.clientY - graphDrag.clientY) * (graphDrag.viewBox.height / rect.height);
+  state.graphViewBox = clampGraphViewBox({
+    x: graphDrag.viewBox.x - dx,
+    y: graphDrag.viewBox.y - dy,
+    width: graphDrag.viewBox.width,
+    height: graphDrag.viewBox.height
+  });
+  state.graphUserMoved = true;
+  renderGraph();
+});
+
+function endGraphDrag(event) {
+  if (!graphDrag || graphDrag.pointerId !== event.pointerId) return;
+  graphDrag = null;
+  networkGraph.classList.remove("is-dragging");
+}
+
+networkGraph.addEventListener("pointerup", endGraphDrag);
+networkGraph.addEventListener("pointercancel", endGraphDrag);
+
+window.addEventListener("resize", () => {
+  if (state.graphUserMoved) return;
+  state.graphViewBox = defaultGraphViewBox();
+  renderGraph();
 });
 
 renderAll();
