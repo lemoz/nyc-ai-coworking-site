@@ -37,11 +37,6 @@
             <a class="btn btn-primary" href="#meetup">RSVP next meetup</a>
             <a class="btn btn-ghost" href="#projects">View demos</a>
           </div>
-          <dl class="hero-stats">
-            <div><dt>Monthly</dt><dd>NYC co-working room</dd></div>
-            <div><dt>Opt-in</dt><dd>private builder profiles</dd></div>
-            <div><dt>Shenzhen</dt><dd>future network node</dd></div>
-          </dl>
         </div>
 
         <div class="atlas" aria-label="Interactive network atlas">
@@ -65,6 +60,11 @@
 
           <div class="map-stage">
             <svg id="networkGraph" viewBox="0 0 1200 760" role="img" aria-label="Interactive map of NYC AI Co-working people, projects, asks, and meetup surfaces"></svg>
+            <aside class="profile-panel" id="profilePanel" aria-live="polite">
+              <p class="eyebrow">Selected node</p>
+              <h2>Choose a node</h2>
+              <p>Select any person, project, ask, or meetup surface in the atlas to see its profile and how it connects.</p>
+            </aside>
             <div class="legend" aria-label="Graph legend">
               <span><i class="dot dot-person"></i>Person</span>
               <span><i class="dot dot-project"></i>Project</span>
@@ -76,13 +76,7 @@
         </div>
       </section>
 
-      <section class="explore" aria-label="Selected profile and connection paths">
-        <aside class="profile-panel" id="profilePanel" aria-live="polite">
-          <p class="eyebrow">Selected node</p>
-          <h2>Choose a node</h2>
-          <p>Select any person, project, ask, or meetup surface in the atlas to see its profile and how it connects.</p>
-        </aside>
-
+      <section class="paths-section" aria-label="Connection paths">
         <div class="paths">
           <p class="eyebrow">Connection paths</p>
           <h3>Trace how the network creates value</h3>

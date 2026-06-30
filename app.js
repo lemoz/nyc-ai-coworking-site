@@ -894,12 +894,12 @@ function selectItem(id, options = {}) {
   renderDetail();
   renderGraph();
   if (options.focusProfile) {
-    profilePanel.scrollIntoView({ behavior: "smooth", block: "center" });
+    document.querySelector("#atlas").scrollIntoView({ behavior: "smooth", block: "start" });
     profilePanel.animate(
       [
-        { boxShadow: "0 0 0 0 rgba(243, 193, 78, 0)" },
-        { boxShadow: "0 0 0 4px rgba(243, 193, 78, 0.4)" },
-        { boxShadow: "0 0 0 0 rgba(243, 193, 78, 0)" }
+        { boxShadow: "0 0 0 0 rgba(198, 242, 78, 0)" },
+        { boxShadow: "0 0 0 4px rgba(198, 242, 78, 0.38)" },
+        { boxShadow: "0 0 0 0 rgba(198, 242, 78, 0)" }
       ],
       { duration: 900, easing: "ease-out" }
     );
