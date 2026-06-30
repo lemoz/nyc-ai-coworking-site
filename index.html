@@ -26,50 +26,71 @@
     </header>
 
     <main id="top">
-      <section class="hero" id="atlas" aria-labelledby="hero-title">
+      <section class="network-hero" id="atlas" aria-labelledby="hero-title">
+        <div class="world-grid" aria-hidden="true"></div>
+        <button class="world-node world-node-nyc" type="button" data-select="nyc-ai-room">
+          <strong>New York</strong>
+          <span>active node</span>
+        </button>
+        <button class="world-node world-node-shenzhen" type="button" data-select="shenzhen-node">
+          <strong>Shenzhen</strong>
+          <span>coming soon</span>
+        </button>
+
         <div class="hero-copy">
-          <p class="eyebrow">AI-enabled co-working network</p>
+          <p class="eyebrow">Live network</p>
           <h1 id="hero-title">Build faster inside NYC's AI co-working network.</h1>
           <p>
-            Show up in New York or enter the network remotely. Demo projects, co-work in opt-in sessions, get mid-work introductions, and turn each meetup into a useful builder graph.
+            The world's first at-will, AI-enabled co-working network for builders. Show up, build demos, get feedback, find collaborators, and enter the graph remotely.
           </p>
           <div class="hero-actions" aria-label="Primary actions">
             <a class="primary-cta" href="#meetup">RSVP next meetup</a>
             <a class="secondary-cta" href="#projects">View demos</a>
           </div>
-        </div>
-
-        <div class="hero-stats" aria-label="Meetup operating targets">
-          <div><strong>Monthly</strong><span>NYC co-working and demos</span></div>
-          <div><strong>Opt-in</strong><span>remote live work sessions</span></div>
-          <div><strong>Shenzhen</strong><span>future network node</span></div>
-        </div>
-      </section>
-
-      <section class="atlas-shell" aria-label="Interactive builder graph">
-        <div class="atlas-toolbar">
-          <div>
-            <p class="eyebrow">Network atlas</p>
-            <h2>NYC AI Co-working is the center node.</h2>
+          <div class="hero-metrics" aria-label="Network signals">
+            <div><strong>Monthly</strong><span>NYC room</span></div>
+            <div><strong>Opt-in</strong><span>live sessions</span></div>
+            <div><strong>Shenzhen</strong><span>future node</span></div>
           </div>
+        </div>
 
-          <div class="controls">
-            <label class="search-control">
-              <span>Search graph</span>
-              <input id="searchInput" type="search" placeholder="Project, person, ask, tag" autocomplete="off" />
-            </label>
-            <div class="mode-control" role="group" aria-label="View mode">
-              <button class="mode-button is-active" type="button" data-mode="all">All</button>
-              <button class="mode-button" type="button" data-mode="projects">Projects</button>
-              <button class="mode-button" type="button" data-mode="people">People</button>
+        <div class="atlas-shell" aria-label="Interactive builder graph">
+          <div class="atlas-toolbar">
+            <div>
+              <p class="eyebrow">Network atlas</p>
+              <h2>NYC AI Co-working is the center node.</h2>
+            </div>
+
+            <div class="controls">
+              <label class="search-control">
+                <span>Search graph</span>
+                <input id="searchInput" type="search" placeholder="Project, person, ask, tag" autocomplete="off" />
+              </label>
+              <div class="mode-control" role="group" aria-label="View mode">
+                <button class="mode-button is-active" type="button" data-mode="all">All</button>
+                <button class="mode-button" type="button" data-mode="projects">Projects</button>
+                <button class="mode-button" type="button" data-mode="people">People</button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="atlas-grid">
           <div class="map-stage">
             <div class="map-backdrop" aria-hidden="true"></div>
             <svg id="networkGraph" viewBox="0 0 1200 760" role="img" aria-label="Interactive map of NYC AI Co-working people, projects, asks, and meetup surfaces"></svg>
+            <div class="orbit-cards" aria-label="Fast graph entry points">
+              <button class="orbit-card orbit-card-builders" type="button" data-select="live-coworking">
+                <span>Builders</span><strong>Opt-in active</strong>
+              </button>
+              <button class="orbit-card orbit-card-projects" type="button" data-select="demo-night">
+                <span>Projects</span><strong>8 tracked</strong>
+              </button>
+              <button class="orbit-card orbit-card-demos" type="button" data-select="media-packets">
+                <span>Demo videos</span><strong>Review clips</strong>
+              </button>
+              <button class="orbit-card orbit-card-profiles" type="button" data-select="profile-consent">
+                <span>Profiles</span><strong>Private first</strong>
+              </button>
+            </div>
             <div class="legend" aria-label="Graph legend">
               <span><i class="legend-dot person-dot"></i>Person</span>
               <span><i class="legend-dot project-dot"></i>Project</span>
@@ -78,22 +99,64 @@
               <span><i class="legend-dot future-dot"></i>Future node</span>
             </div>
           </div>
-
-          <aside class="profile-panel" id="profilePanel" aria-live="polite">
-            <p class="eyebrow">Selected profile</p>
-            <h2>Choose a node</h2>
-            <p>Select any person, project, ask, or meetup surface to see the profile and graph path.</p>
-          </aside>
         </div>
 
-        <div class="connection-tray">
-          <div>
-            <p class="eyebrow">Connection game</p>
-            <h3>WikiHole-style prompts</h3>
-            <p>Use the graph to test whether the network creates real paths between demos, builders, live sessions, asks, and follow-ups.</p>
+        <aside class="profile-panel" id="profilePanel" aria-live="polite">
+          <p class="eyebrow">Selected profile</p>
+          <h2>Choose a node</h2>
+          <p>Select any person, project, ask, or meetup surface to see the profile and graph path.</p>
+        </aside>
+
+        <div class="hero-lower">
+          <div class="activity-panel" aria-label="Live activity">
+            <p class="eyebrow">Live activity</p>
+            <div class="activity-row">
+              <span class="activity-dot"></span>
+              <strong>Opt-in session</strong>
+              <span>Builder asking for demo feedback</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-dot grid-dot"></span>
+              <strong>Mid-work intro</strong>
+              <span>Consumer AI builder to GTM feedback</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-dot code-dot"></span>
+              <strong>New project</strong>
+              <span>Profile pending approval</span>
+            </div>
           </div>
-          <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
-          <div id="activePath" class="active-path" aria-live="polite"></div>
+
+          <div class="demo-wall" aria-label="Latest demos">
+            <div class="demo-wall-head">
+              <p class="eyebrow">Latest demos</p>
+              <a href="#projects">View all demos</a>
+            </div>
+            <div class="demo-strip">
+              <button class="demo-tile" type="button" data-select="imposter-artist" data-focus-profile="true">
+                <img src="tmp-demo-review/advik-late-01.png" alt="Imposter Artist demo screenshot" />
+                <span>Imposter Artist</span>
+              </button>
+              <button class="demo-tile no-media" type="button" data-select="got2eat" data-focus-profile="true">
+                <i></i><span>Got2Eat</span>
+              </button>
+              <button class="demo-tile no-media" type="button" data-select="rem" data-focus-profile="true">
+                <i></i><span>Rem</span>
+              </button>
+              <button class="demo-tile no-media" type="button" data-select="grantsville" data-focus-profile="true">
+                <i></i><span>Grantsville</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="connection-tray">
+            <div>
+              <p class="eyebrow">Connection paths</p>
+              <h3>WikiHole-style prompts</h3>
+            </div>
+            <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
+            <div id="activePath" class="active-path" aria-live="polite"></div>
+          </div>
         </div>
       </section>
 

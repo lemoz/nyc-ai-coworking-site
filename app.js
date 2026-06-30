@@ -795,6 +795,7 @@ function renderGraph() {
       const dimmed = !visibleIds.has(node.id) || (pathNodes.size > 0 && !pathNodes.has(node.id));
       const selected = node.id === state.selectedId;
       const inPath = pathNodes.has(node.id);
+      const isCore = node.id === "nyc-ai-room";
       const fill =
         node.nodeType === "project"
           ? "var(--teal)"
@@ -806,7 +807,7 @@ function renderGraph() {
                 ? "var(--muted-2)"
                 : "var(--violet)";
       const radius =
-        node.nodeType === "meetup" ? 34 : node.nodeType === "ask" ? 26 : node.nodeType === "future" ? 24 : 30;
+        isCore ? 62 : node.nodeType === "meetup" ? 34 : node.nodeType === "ask" ? 26 : node.nodeType === "future" ? 24 : 30;
       const shape =
         node.nodeType === "project"
           ? `<rect x="${node.x - 31}" y="${node.y - 31}" width="62" height="62" rx="10" fill="${fill}" />`
@@ -814,7 +815,7 @@ function renderGraph() {
       const labelY = node.y + radius + 23;
       const subLabel =
         node.nodeType === "project"
-            ? node.stage
+          ? node.stage
             : node.nodeType === "person"
               ? "builder"
               : node.nodeType === "ask"
@@ -822,11 +823,15 @@ function renderGraph() {
                 : node.nodeType === "future"
                   ? "coming soon"
                   : "meetup";
+      const labelMarkup = isCore
+        ? `<text class="core-label" x="${node.x}" y="${node.y - 5}" text-anchor="middle">NYC AI</text>
+           <text class="core-label" x="${node.x}" y="${node.y + 22}" text-anchor="middle">Co-working</text>`
+        : `<text x="${node.x}" y="${labelY}" text-anchor="middle">${node.name}</text>
+           <text class="sub-label" x="${node.x}" y="${labelY + 18}" text-anchor="middle">${subLabel}</text>`;
       return `
-        <g class="graph-node ${dimmed ? "is-dimmed" : ""} ${selected ? "is-selected" : ""} ${inPath ? "is-path" : ""}" data-select="${node.id}" tabindex="0" role="button" aria-label="${node.name}">
+        <g class="graph-node ${isCore ? "is-core" : ""} ${node.nodeType === "future" ? "is-future" : ""} ${dimmed ? "is-dimmed" : ""} ${selected ? "is-selected" : ""} ${inPath ? "is-path" : ""}" data-select="${node.id}" tabindex="0" role="button" aria-label="${node.name}">
           ${shape}
-          <text x="${node.x}" y="${labelY}" text-anchor="middle">${node.name}</text>
-          <text class="sub-label" x="${node.x}" y="${labelY + 18}" text-anchor="middle">${subLabel}</text>
+          ${labelMarkup}
         </g>`;
     })
     .join("");
