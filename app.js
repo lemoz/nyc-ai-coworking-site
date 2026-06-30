@@ -470,7 +470,7 @@ const searchInput = document.querySelector("#searchInput");
 const pipelineColumns = document.querySelector("#pipelineColumns");
 const pathPromptsEl = document.querySelector("#pathPrompts");
 const activePathEl = document.querySelector("#activePath");
-const modeButtons = Array.from(document.querySelectorAll(".mode-button"));
+const modeButtons = Array.from(document.querySelectorAll(".mode"));
 
 function normalize(value) {
   return String(value || "").toLowerCase();
@@ -588,7 +588,7 @@ function projectCard(project) {
           <div class="meta-row"><span>Stage</span><strong>${project.stage}</strong></div>
           <div class="meta-row"><span>Need</span><strong>${project.need}</strong></div>
         </div>
-        <button type="button" data-select="${project.id}" data-focus-profile="true">Open profile</button>
+        <button class="card-btn" type="button" data-select="${project.id}" data-focus-profile="true">Open profile</button>
       </div>
     </article>`;
 }
@@ -619,7 +619,7 @@ function personCard(person) {
         <div class="meta-row"><span>Needs</span><strong>${person.needs}</strong></div>
         <div class="meta-row"><span>Follow-up</span><strong>${person.followUp}</strong></div>
       </div>
-      <button type="button" data-select="${person.id}" data-focus-profile="true">Open profile</button>
+      <button class="card-btn" type="button" data-select="${person.id}" data-focus-profile="true">Open profile</button>
     </article>`;
 }
 
@@ -874,7 +874,7 @@ function renderPipeline() {
       const items = projects.filter((project) => project.status === status);
       return `
         <div class="pipeline-column">
-          <h3>${label}<span>${items.length}</span></h3>
+          <div class="col-head">${label}<span>${items.length}</span></div>
           ${items
             .map(
               (item) =>
@@ -894,12 +894,12 @@ function selectItem(id, options = {}) {
   renderDetail();
   renderGraph();
   if (options.focusProfile) {
-    document.querySelector("#atlas").scrollIntoView({ behavior: "smooth", block: "start" });
+    profilePanel.scrollIntoView({ behavior: "smooth", block: "center" });
     profilePanel.animate(
       [
-        { boxShadow: "0 0 0 0 rgba(241, 187, 76, 0)" },
-        { boxShadow: "0 0 0 4px rgba(241, 187, 76, 0.35)" },
-        { boxShadow: "0 0 0 0 rgba(241, 187, 76, 0)" }
+        { boxShadow: "0 0 0 0 rgba(243, 193, 78, 0)" },
+        { boxShadow: "0 0 0 4px rgba(243, 193, 78, 0.4)" },
+        { boxShadow: "0 0 0 0 rgba(243, 193, 78, 0)" }
       ],
       { duration: 900, easing: "ease-out" }
     );

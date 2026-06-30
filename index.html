@@ -3,266 +3,153 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NYC AI Co-working Network Atlas</title>
+    <title>NYC AI Co-working</title>
     <link rel="stylesheet" href="styles.css" />
     <script defer src="app.js"></script>
   </head>
   <body>
     <header class="topbar">
       <a class="brand" href="#top" aria-label="NYC AI Co-working home">
-        <span class="brand-mark" aria-hidden="true">NYC AI</span>
-        <span>
+        <span class="brand-mark" aria-hidden="true">AI</span>
+        <span class="brand-text">
           <strong>NYC AI Co-working</strong>
-          <small>AI-enabled co-working network</small>
+          <small>An AI-enabled co-working network</small>
         </span>
       </a>
       <nav class="nav" aria-label="Primary">
-        <a href="#atlas">Graph</a>
-        <a href="#projects">Projects</a>
+        <a href="#atlas">Atlas</a>
+        <a href="#projects">Demos</a>
         <a href="#live">Live</a>
-        <a href="#people">People</a>
         <a class="nav-cta" href="#meetup">RSVP</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="network-hero" id="atlas" aria-labelledby="hero-title">
-        <div class="world-grid" aria-hidden="true"></div>
-        <button class="world-node world-node-nyc" type="button" data-select="nyc-ai-room">
-          <strong>New York</strong>
-          <span>active node</span>
-        </button>
-        <button class="world-node world-node-shenzhen" type="button" data-select="shenzhen-node">
-          <strong>Shenzhen</strong>
-          <span>coming soon</span>
-        </button>
-
+      <section class="hero" id="atlas" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">Live network</p>
+          <p class="eyebrow"><span class="pulse" aria-hidden="true"></span>Live network &middot; New York active</p>
           <h1 id="hero-title">Build faster inside NYC's AI co-working network.</h1>
-          <p>
-            The world's first at-will, AI-enabled co-working network for builders. Show up, build demos, get feedback, find collaborators, and enter the graph remotely.
+          <p class="lede">
+            An at-will, AI-enabled co-working network for builders. Show up, ship demos,
+            get real feedback, and find the people who can move your project forward.
           </p>
-          <div class="hero-actions" aria-label="Primary actions">
-            <a class="primary-cta" href="#meetup">RSVP next meetup</a>
-            <a class="secondary-cta" href="#projects">View demos</a>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#meetup">RSVP next meetup</a>
+            <a class="btn btn-ghost" href="#projects">View demos</a>
           </div>
-          <div class="hero-metrics" aria-label="Network signals">
-            <div><strong>Monthly</strong><span>NYC room</span></div>
-            <div><strong>Opt-in</strong><span>live sessions</span></div>
-            <div><strong>Shenzhen</strong><span>future node</span></div>
-          </div>
+          <dl class="hero-stats">
+            <div><dt>Monthly</dt><dd>NYC co-working room</dd></div>
+            <div><dt>Opt-in</dt><dd>private builder profiles</dd></div>
+            <div><dt>Shenzhen</dt><dd>future network node</dd></div>
+          </dl>
         </div>
 
-        <div class="atlas-shell" aria-label="Interactive builder graph">
-          <div class="atlas-toolbar">
-            <div>
+        <div class="atlas" aria-label="Interactive network atlas">
+          <div class="atlas-head">
+            <div class="atlas-title">
               <p class="eyebrow">Network atlas</p>
               <h2>NYC AI Co-working is the center node.</h2>
             </div>
-
-            <div class="controls">
-              <label class="search-control">
-                <span>Search graph</span>
-                <input id="searchInput" type="search" placeholder="Project, person, ask, tag" autocomplete="off" />
+            <div class="atlas-controls">
+              <label class="search">
+                <span class="sr-only">Search the graph</span>
+                <input id="searchInput" type="search" placeholder="Search people, projects, asks" autocomplete="off" />
               </label>
-              <div class="mode-control" role="group" aria-label="View mode">
-                <button class="mode-button is-active" type="button" data-mode="all">All</button>
-                <button class="mode-button" type="button" data-mode="projects">Projects</button>
-                <button class="mode-button" type="button" data-mode="people">People</button>
+              <div class="modes" role="group" aria-label="View mode">
+                <button class="mode is-active" type="button" data-mode="all">All</button>
+                <button class="mode" type="button" data-mode="projects">Projects</button>
+                <button class="mode" type="button" data-mode="people">People</button>
               </div>
             </div>
           </div>
 
           <div class="map-stage">
-            <div class="map-backdrop" aria-hidden="true"></div>
             <svg id="networkGraph" viewBox="0 0 1200 760" role="img" aria-label="Interactive map of NYC AI Co-working people, projects, asks, and meetup surfaces"></svg>
-            <div class="orbit-cards" aria-label="Fast graph entry points">
-              <button class="orbit-card orbit-card-builders" type="button" data-select="live-coworking">
-                <span>Builders</span><strong>Opt-in active</strong>
-              </button>
-              <button class="orbit-card orbit-card-projects" type="button" data-select="demo-night">
-                <span>Projects</span><strong>8 tracked</strong>
-              </button>
-              <button class="orbit-card orbit-card-demos" type="button" data-select="media-packets">
-                <span>Demo videos</span><strong>Review clips</strong>
-              </button>
-              <button class="orbit-card orbit-card-profiles" type="button" data-select="profile-consent">
-                <span>Profiles</span><strong>Private first</strong>
-              </button>
-            </div>
             <div class="legend" aria-label="Graph legend">
-              <span><i class="legend-dot person-dot"></i>Person</span>
-              <span><i class="legend-dot project-dot"></i>Project</span>
-              <span><i class="legend-dot ask-dot"></i>Ask</span>
-              <span><i class="legend-dot meetup-dot"></i>Meetup</span>
-              <span><i class="legend-dot future-dot"></i>Future node</span>
+              <span><i class="dot dot-person"></i>Person</span>
+              <span><i class="dot dot-project"></i>Project</span>
+              <span><i class="dot dot-ask"></i>Ask</span>
+              <span><i class="dot dot-meetup"></i>Meetup</span>
+              <span><i class="dot dot-future"></i>Future node</span>
             </div>
           </div>
         </div>
+      </section>
 
+      <section class="explore" aria-label="Selected profile and connection paths">
         <aside class="profile-panel" id="profilePanel" aria-live="polite">
-          <p class="eyebrow">Selected profile</p>
+          <p class="eyebrow">Selected node</p>
           <h2>Choose a node</h2>
-          <p>Select any person, project, ask, or meetup surface to see the profile and graph path.</p>
+          <p>Select any person, project, ask, or meetup surface in the atlas to see its profile and how it connects.</p>
         </aside>
 
-        <div class="hero-lower">
-          <div class="activity-panel" aria-label="Live activity">
-            <p class="eyebrow">Live activity</p>
-            <div class="activity-row">
-              <span class="activity-dot"></span>
-              <strong>Opt-in session</strong>
-              <span>Builder asking for demo feedback</span>
-            </div>
-            <div class="activity-row">
-              <span class="activity-dot grid-dot"></span>
-              <strong>Mid-work intro</strong>
-              <span>Consumer AI builder to GTM feedback</span>
-            </div>
-            <div class="activity-row">
-              <span class="activity-dot code-dot"></span>
-              <strong>New project</strong>
-              <span>Profile pending approval</span>
-            </div>
-          </div>
-
-          <div class="demo-wall" aria-label="Latest demos">
-            <div class="demo-wall-head">
-              <p class="eyebrow">Latest demos</p>
-              <a href="#projects">View all demos</a>
-            </div>
-            <div class="demo-strip">
-              <button class="demo-tile" type="button" data-select="imposter-artist" data-focus-profile="true">
-                <img src="tmp-demo-review/advik-late-01.png" alt="Imposter Artist demo screenshot" />
-                <span>Imposter Artist</span>
-              </button>
-              <button class="demo-tile no-media" type="button" data-select="got2eat" data-focus-profile="true">
-                <i></i><span>Got2Eat</span>
-              </button>
-              <button class="demo-tile no-media" type="button" data-select="rem" data-focus-profile="true">
-                <i></i><span>Rem</span>
-              </button>
-              <button class="demo-tile no-media" type="button" data-select="grantsville" data-focus-profile="true">
-                <i></i><span>Grantsville</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="connection-tray">
-            <div>
-              <p class="eyebrow">Connection paths</p>
-              <h3>WikiHole-style prompts</h3>
-            </div>
-            <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
-            <div id="activePath" class="active-path" aria-live="polite"></div>
-          </div>
+        <div class="paths">
+          <p class="eyebrow">Connection paths</p>
+          <h3>Trace how the network creates value</h3>
+          <div id="pathPrompts" class="path-prompts" aria-label="Connection prompts"></div>
+          <div id="activePath" class="active-path" aria-live="polite"></div>
         </div>
       </section>
 
-      <section id="live" class="live-section" aria-labelledby="live-title">
-        <div class="section-intro">
-          <div>
-            <p class="eyebrow">Opt-in live layer</p>
-            <h2 id="live-title">Online should mean co-working, not surveillance.</h2>
-          </div>
+      <section id="live" class="band" aria-labelledby="live-title">
+        <div class="band-intro">
+          <p class="eyebrow">Opt-in live layer</p>
+          <h2 id="live-title">Online should mean co-working, not surveillance.</h2>
           <p>
-            A future member mode where builders can enter the network remotely, share a lightweight session context, and get useful help while they are actually working.
+            A future member mode where builders can enter the network remotely, share a
+            lightweight session context, and get useful help while they are actually working.
           </p>
         </div>
-        <div class="live-grid">
-          <article>
-            <span class="ledger-icon">01</span>
-            <h3>Live work session</h3>
-            <p>A builder can mark themselves active, add what they are working on, and optionally stream, screen-share, or post a short session note.</p>
-          </article>
-          <article>
-            <span class="ledger-icon">02</span>
-            <h3>Context, not intrusion</h3>
-            <p>The useful unit is current project, blocker, and ask. Presence and work details stay opt-in and can be private by default.</p>
-          </article>
-          <article>
-            <span class="ledger-icon">03</span>
-            <h3>Mid-work intros</h3>
-            <p>When two active builders have overlapping projects, asks, or skills, the system can suggest a low-friction intro at the right moment.</p>
-          </article>
-          <article>
-            <span class="ledger-icon">04</span>
-            <h3>Profile approval</h3>
-            <p>Public profiles start with demo people, then this month's builders, then checked-in members, each confirmed by email before publishing.</p>
-          </article>
+        <div class="cards-4">
+          <article class="feature"><span class="num">01</span><h3>Live work session</h3><p>Mark yourself active, note what you are working on, and optionally share a short session note.</p></article>
+          <article class="feature"><span class="num">02</span><h3>Context, not intrusion</h3><p>The useful unit is current project, blocker, and ask. Presence stays opt-in and private by default.</p></article>
+          <article class="feature"><span class="num">03</span><h3>Mid-work intros</h3><p>When two active builders overlap on projects or asks, the system can suggest a low-friction intro.</p></article>
+          <article class="feature"><span class="num">04</span><h3>Profile approval</h3><p>Public profiles start with demo people, then this month's builders, each confirmed by email first.</p></article>
         </div>
       </section>
 
-      <section class="filter-band" aria-label="Project filters">
-        <div class="section-intro">
+      <section id="projects" class="band" aria-labelledby="projects-title">
+        <div class="band-intro row">
           <div>
-            <p class="eyebrow">Browse</p>
-            <h2>Filter the project and people ledger</h2>
+            <p class="eyebrow">Demos and projects</p>
+            <h2 id="projects-title">Projects worth tracking</h2>
           </div>
-        </div>
-        <div id="filterChips" class="filter-chips"></div>
-      </section>
-
-      <section id="projects" class="content-section" aria-labelledby="projects-title">
-        <div class="section-intro">
-          <div>
-            <p class="eyebrow">Project profiles</p>
-            <h2 id="projects-title">Demos and projects worth tracking</h2>
-          </div>
+          <div id="filterChips" class="filter-chips"></div>
         </div>
         <div id="projectGrid" class="project-grid"></div>
       </section>
 
-      <section id="people" class="content-section split-section" aria-labelledby="people-title">
+      <section id="people" class="band split" aria-labelledby="people-title">
         <div>
-          <div class="section-intro">
-            <div>
-              <p class="eyebrow">Opt-in builder profiles</p>
-              <h2 id="people-title">Who shows up and what they can move forward</h2>
-            </div>
+          <div class="band-intro">
+            <p class="eyebrow">Opt-in builder profiles</p>
+            <h2 id="people-title">Who shows up</h2>
           </div>
           <div id="peopleGrid" class="people-grid"></div>
         </div>
-
-        <div class="pipeline" aria-label="Demo pipeline">
-          <div class="section-intro compact">
-            <p class="eyebrow">Demo slate</p>
-            <h2>Operating buckets</h2>
-          </div>
+        <aside class="pipeline">
+          <p class="eyebrow">Demo slate</p>
+          <h3>Operating buckets</h3>
           <div id="pipelineColumns" class="pipeline-columns"></div>
-        </div>
+        </aside>
       </section>
 
-      <section id="meetup" class="meetup-section" aria-labelledby="meetup-title">
-        <div>
+      <section id="meetup" class="band cta-band" aria-labelledby="meetup-title">
+        <div class="band-intro">
           <p class="eyebrow">RSVP next meetup</p>
           <h2 id="meetup-title">The event is the spike. The network is the product.</h2>
           <p>
-            The primary CTA should point to the current Luma or RSVP link as soon as the next event page is live. Until then, the site explains the format: recurring co-working, demo slots, opt-in profiles, and a live network layer that can grow beyond New York.
+            The primary CTA points to the current RSVP link as soon as the next event page is live.
+            Until then: recurring co-working, demo slots, opt-in profiles, and a live layer that can
+            grow beyond New York.
           </p>
+          <a class="btn btn-primary" href="#top">RSVP next meetup</a>
         </div>
-        <div class="ledger-grid">
-          <article>
-            <span class="ledger-icon">01</span>
-            <h3>Project context</h3>
-            <p>Stage, demo status, links, desired feedback, and media permission.</p>
-          </article>
-          <article>
-            <span class="ledger-icon">02</span>
-            <h3>Current blocker</h3>
-            <p>Users, intros, cofounders, GTM, funding, venue, or product feedback.</p>
-          </article>
-          <article>
-            <span class="ledger-icon">03</span>
-            <h3>Follow-up path</h3>
-            <p>Attendance history, last touch, next follow-up, and how closely to track.</p>
-          </article>
-          <article>
-            <span class="ledger-icon">04</span>
-            <h3>Network value</h3>
-            <p>The actual connection path between a person, project, ask, and next intro.</p>
-          </article>
+        <div class="cards-4">
+          <article class="feature"><span class="num">01</span><h3>Project context</h3><p>Stage, demo status, links, desired feedback, and media permission.</p></article>
+          <article class="feature"><span class="num">02</span><h3>Current blocker</h3><p>Users, intros, cofounders, GTM, funding, venue, or product feedback.</p></article>
+          <article class="feature"><span class="num">03</span><h3>Follow-up path</h3><p>Attendance history, last touch, and the next concrete follow-up.</p></article>
+          <article class="feature"><span class="num">04</span><h3>Network value</h3><p>The real connection path between a person, project, ask, and next intro.</p></article>
         </div>
       </section>
     </main>
